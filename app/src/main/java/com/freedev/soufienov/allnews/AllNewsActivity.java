@@ -33,6 +33,7 @@ public class AllNewsActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private ArticleAdapter aAdapter;
     private String category;
+    private String country;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +46,9 @@ aAdapter = new ArticleAdapter(articleList);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(aAdapter);
-        category=getIntent().getStringExtra("category");
-
+        category=getIntent().getStringExtra("category").toLowerCase();
+        country=getIntent().getStringExtra("loc").toLowerCase();
+category=(category=="all")? "general":category;
         getSupportActionBar().setTitle(category);
 
 progressBar.setVisibility(View.VISIBLE);
@@ -57,8 +59,10 @@ progressBar.setVisibility(View.VISIBLE);
     private  void  SendRequest(){
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://newsapi.org/v2/top-headlines?" +
-                "country=us&category=" +category.toLowerCase()+
+        String url =(country=="all")? "https://newsapi.org/v2/top-headlines?" +
+                "country="+country+"&category=" +category+
+                "&apiKey=59514c0e996a4982b784153d6a7762f3":"https://newsapi.org/v2/top-headlines?" +
+                "category=" +category+
                 "&apiKey=59514c0e996a4982b784153d6a7762f3";
 
 // Request a string response from the provided URL.
