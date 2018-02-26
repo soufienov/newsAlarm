@@ -26,15 +26,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+
 public class AllNewsActivity extends AppCompatActivity {
     private List<Article> articleList = new ArrayList<>();
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private ArticleAdapter aAdapter;
     private String category;
-    private String country;
-
+    private String country,language;
+String[] languages={"ar","de","en","es","fr","he","it","nl","no","pt","ru","se","ud","zh"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,13 +60,16 @@ progressBar.setVisibility(View.VISIBLE);
 
 
     private  void  SendRequest(){
+language= Locale.getDefault().getLanguage();
+        if(!Arrays.asList(languages).contains(language)){language="en";}
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url =(country=="all")? "https://newsapi.org/v2/top-headlines?" +
+        String url =(country!="all")? "https://newsapi.org/v2/top-headlines?" +
                 "country="+country+"&category=" +category+
                 "&apiKey=59514c0e996a4982b784153d6a7762f3":"https://newsapi.org/v2/top-headlines?" +
                 "category=" +category+
                 "&apiKey=59514c0e996a4982b784153d6a7762f3";
+        Log.e("url",url);
 
 // Request a string response from the provided URL.
         JsonObjectRequest  stringRequest = new JsonObjectRequest(Request.Method.GET, url,null,
@@ -75,10 +81,12 @@ progressBar.setVisibility(View.VISIBLE);
                             for (int i = 0 ; i < articles.length(); i++) {
                                 JSONObject art= articles.getJSONObject(i);
                                 Article article= new Article(art);
-                                articleList.add(article);
-                                progressBar.setVisibility(View.GONE);
+                                Log.e("ss",Source.getSourceLanguage(article.sourcename));
 
-                            }
+                                articleList.add(article);
+
+
+                            } progressBar.setVisibility(View.GONE);
                             aAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
