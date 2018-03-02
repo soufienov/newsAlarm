@@ -157,6 +157,7 @@
         android:onClick="getNews"
 
         android:text="All"
+
         app:layout_constraintBottom_toTopOf="@+id/adView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.629"
