@@ -1,7 +1,9 @@
 package com.freedev.soufienov.allnews;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -119,6 +121,7 @@ category=(category=="all")? "general":category;
     }
 
     public void openPage(View view) {
+        if(isInternetAvailable()){
         LinearLayout linearLayout= (LinearLayout)view;
        TextView link= (TextView) linearLayout.getChildAt(2);
        String url= link.getText().toString();
@@ -127,7 +130,8 @@ category=(category=="all")? "general":category;
         Intent browserIntent = new Intent(AllNewsActivity.this,WebviewActivity.class);
         browserIntent.putExtra("link",url);
         browserIntent.putExtra("title",tit);
-        startActivity(browserIntent);
+        startActivity(browserIntent);}
+        else showAlert();
     }
 
     public void popCountries(View view) {
@@ -148,5 +152,28 @@ category=(category=="all")? "general":category;
             }
         });
         builder.show();
+    }
+    public boolean isInternetAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
+    }
+    public  void showAlert(){
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+        builder.setTitle("No Internet")
+                .setMessage("Please check your intenet connection and try again")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                    }
+                })
+
+
+                .show();
     }
 }

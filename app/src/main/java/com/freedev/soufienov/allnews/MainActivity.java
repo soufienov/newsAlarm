@@ -1,8 +1,12 @@
 package com.freedev.soufienov.allnews;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.View;
@@ -44,11 +48,37 @@ if(!Arrays.asList(countries).contains(countryCode)){countryCode="all";}
     }
 
     public void getNews(View view) {
+
         Button btn =(Button)view;
         String cat= btn.getText().toString();
        Intent intent= new Intent(MainActivity.this,AllNewsActivity.class);
        intent.putExtra("category",cat);
        intent.putExtra("loc",countryCode);
-       startActivity(intent);
+            if(isInternetAvailable()){startActivity(intent);}
+        else showAlert();
+
+    }
+    public boolean isInternetAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
+    }
+    public  void showAlert(){
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+        builder.setTitle("No Internet")
+                .setMessage("Please check your intenet connection and try again")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                    }
+                })
+
+
+                .show();
     }
 }
