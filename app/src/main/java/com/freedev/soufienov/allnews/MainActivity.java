@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridLayout;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -18,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
     private AdView mAdView;
     String countryCode;
     String[] countries;
-
-
+Button btn;
+GridLayout grd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+
         TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
          countryCode = tm.getSimCountryIso();
 if(!Arrays.asList(countries).contains(countryCode)){countryCode="all";}
