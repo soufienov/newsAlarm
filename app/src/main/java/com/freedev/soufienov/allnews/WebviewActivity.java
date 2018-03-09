@@ -1,9 +1,8 @@
 package com.freedev.soufienov.allnews;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -19,7 +18,7 @@ public class WebviewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); setContentView(R.layout.activity_webview);
-        mWebView = (WebView) findViewById(R.id.webview);
+        mWebView = findViewById(R.id.webview);
        WebSettings webSettings = mWebView.getSettings();
      webSettings.setJavaScriptEnabled(true);
         Intent current= getIntent();
@@ -27,7 +26,7 @@ public class WebviewActivity extends AppCompatActivity {
         String url=current.getStringExtra("link");
         getSupportActionBar().setTitle(title);
         mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-7106139341895351/4988118027");
+        mInterstitialAd.setAdUnitId("ca-app-pub-7106139341895351/6460814186");
         mWebView.loadUrl(url);
 
         mInterstitialAd.loadAd(new AdRequest.Builder().build());

@@ -33,7 +33,7 @@ GridLayout grd;
         "th","tr","ae","ua","gb","us","ve"};
         setContentView(R.layout.activity_main);
         Button politics= findViewById(R.id.button);
-        MobileAds.initialize(this, "ca-app-pub-7106139341895351~3511384828");
+        MobileAds.initialize(this, "ca-app-pub-7106139341895351~8411780987");
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
