@@ -3,15 +3,19 @@ package com.freedev.soufienov.allnews;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -23,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
     private AdView mAdView;
     String countryCode;
     String[] countries;
-Button btn;
-GridLayout grd;
+    ActionBar actionbar;
+    TextView textview;
+    RelativeLayout.LayoutParams layoutparams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +41,7 @@ GridLayout grd;
         "ro","ru","sa","kr","ch","tw",
         "th","tr","ae","ua","gb","us","ve"};
         setContentView(R.layout.activity_main);
-        Button politics= findViewById(R.id.button);
+     ActionBarTitleGravity();
         MobileAds.initialize(this, "ca-app-pub-7106139341895351~8411780987");
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -80,5 +85,29 @@ if(!Arrays.asList(countries).contains(countryCode)){countryCode="all";}
 
 
                 .show();
+    }
+    private void ActionBarTitleGravity() {
+        // TODO Auto-generated method stub
+
+        actionbar = getSupportActionBar();
+
+        textview = new TextView(getApplicationContext());
+
+        layoutparams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        textview.setLayoutParams(layoutparams);
+
+        textview.setText("NOW|HERE");
+
+        textview.setTextColor(Color.WHITE);
+
+        textview.setGravity(Gravity.CENTER);
+
+        textview.setTextSize(20);
+
+        actionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+        actionbar.setCustomView(textview);
+
     }
 }
