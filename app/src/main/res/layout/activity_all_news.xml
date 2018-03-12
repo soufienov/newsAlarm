@@ -5,7 +5,19 @@
     android:layout_height="match_parent"
     tools:context="com.freedev.soufienov.allnews.AllNewsActivity"
     android:orientation="vertical">
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
 
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-7106139341895351/1044835970"
+        ads:layout_constraintBottom_toBottomOf="parent"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:layout_constraintStart_toStartOf="parent"
+        ads:layout_constraintTop_toTopOf="parent"
+        ads:layout_constraintVertical_bias="1.0"></com.google.android.gms.ads.AdView>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
@@ -30,18 +42,6 @@
         android:src="@drawable/all"
         android:backgroundTintMode="screen" />
 
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
 
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-7106139341895351/1044835970"
-        ads:layout_constraintBottom_toBottomOf="parent"
-        ads:layout_constraintEnd_toEndOf="parent"
-        ads:layout_constraintStart_toStartOf="parent"
-        ads:layout_constraintTop_toTopOf="parent"
-        ads:layout_constraintVertical_bias="1.0"></com.google.android.gms.ads.AdView>
 
 </android.support.design.widget.CoordinatorLayout>
