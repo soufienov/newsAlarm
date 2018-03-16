@@ -34,7 +34,6 @@ public class WebviewActivity extends AppCompatActivity {
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {  mInterstitialAd.show();
-                // Code to be executed when an ad finishes loading.
             }
         });
 

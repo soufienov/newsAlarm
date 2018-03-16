@@ -13,12 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -50,8 +50,10 @@ public class AllNewsActivity extends AppCompatActivity {
             "hu","in","id","il","it","jp","mx","nl","ng","pt","pl",
             "ro","ru","sa","kr","ch","tw",
             "th","tr","ae","ua","ve"};
-    private String country,language;
+    private String country;
 String[] languages={"ar","de","en","es","fr","he","it","nl","no","pt","ru","se","ud","zh"};
+    private SearchView searchView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +63,23 @@ String[] languages={"ar","de","en","es","fr","he","it","nl","no","pt","ru","se",
         setContentView(R.layout.activity_all_news);
         recyclerView = findViewById(R.id.recycler_view);
         progressBar= findViewById(R.id.progressBar2);
+        searchView= findViewById(R.id.searchView);
+        searchView.setQueryHint("Search here");
+searchView.setActivated(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+               Search(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                return false;
+            }
+        });
 aAdapter = new ArticleAdapter(articleList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -76,10 +95,7 @@ category=(category=="all")? "general":category;
 
 
     private  void  SendRequest(){
-//language= Locale.getDefault().getLanguage();
-//        if(!Arrays.asList(languages).contains(language)){language="en";}
-        progressBar.setVisibility(View.VISIBLE);
-        Log.e("countr",country);
+       progressBar.setVisibility(View.VISIBLE);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         String url =(!country.equals("all"))? "https://newsapi.org/v2/top-headlines?" +
@@ -88,7 +104,6 @@ category=(category=="all")? "general":category;
                 "category=" +category+
                 "&apiKey=59514c0e996a4982b784153d6a7762f3";
 
-// Request a string response from the provided URL.
         JsonObjectRequest  stringRequest = new JsonObjectRequest(Request.Method.GET, url,null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -112,14 +127,51 @@ category=(category=="all")? "general":category;
                     }}, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("That didn't work!","vbds");
+
             }
         });
-// Add the request to the RequestQueue.
         queue.add(stringRequest);
 
     }
+    private  void  Search(String q){
+      progressBar.setVisibility(View.VISIBLE);
 
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url =(!country.equals("all"))? "https://newsapi.org/v2/top-headlines?q="+q +
+                "&country="+country+"&category=" +category+
+                "&apiKey=59514c0e996a4982b784153d6a7762f3":"https://newsapi.org/v2/top-headlines?q="+q +
+                "&category=" +category+
+                "&apiKey=59514c0e996a4982b784153d6a7762f3";
+
+        JsonObjectRequest  stringRequest = new JsonObjectRequest(Request.Method.GET, url,null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject  response)  {
+                        try {articleList.clear();
+                            JSONArray articles= (JSONArray) response.get("articles");
+                            for (int i = 0 ; i < articles.length(); i++) {
+                                JSONObject art= articles.getJSONObject(i);
+                                Article article= new Article(art);
+
+                                articleList.add(article);
+
+
+                            } progressBar.setVisibility(View.GONE);
+                            aAdapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            progressBar.setVisibility(View.GONE);
+
+                        }
+                    }}, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        queue.add(stringRequest);
+
+    }
     public void openPage(View view) {
         if(isInternetAvailable()){
         LinearLayout linearLayout= (LinearLayout)view;
@@ -148,7 +200,6 @@ category=(category=="all")? "general":category;
                 flb.setImageResource(ident);
                 country= countries[which];
                 SendRequest();
-                // the user clicked on colors[which]
             }
         });
         builder.show();
@@ -169,7 +220,6 @@ category=(category=="all")? "general":category;
                 .setMessage("Please check your intenet connection and try again")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // continue with delete
                     }
                 })
 
