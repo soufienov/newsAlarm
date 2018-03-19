@@ -1,4 +1,38 @@
 <resources>
     <string name="app_name">NOW|HERE</string>
     <string name="title_activity_news">NewsActivity</string>
+    <string-array name="days">
+        <item>Everyday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+
+    </string-array>
+    <string-array name="lang">
+        <item>English</item>
+        <item>French</item>
+        <item>Spanish</item>
+
+        <item>Germain</item>
+        <item>Chinese</item>
+        <item>Japanese</item>
+
+
+    </string-array>
+    <string-array name="info">
+        <item>General</item>
+        <item>Sports</item>
+        <item>Entertainment</item>
+
+        <item>Business</item>
+        <item>Sciences</item>
+        <item>Tech</item>
+
+
+    </string-array>
 </resources>

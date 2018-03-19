@@ -18,13 +18,13 @@ public class NewsReader extends AppCompatActivity {
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.set_alarm);
 
         try{   t1=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if(status != TextToSpeech.ERROR) {
-                    t1.setLanguage(Locale.UK);
+                    t1.setLanguage(Locale.ENGLISH);
                     String title=getIntent().getStringExtra("title");
                     unlockScreen();
                     t1.speak(title, TextToSpeech.QUEUE_FLUSH, null);
