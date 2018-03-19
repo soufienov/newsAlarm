@@ -1,4 +1,4 @@
-package com.freedev.soufienov.allnews;
+package com.freedev.soufienov.newsAlarm;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,10 +19,10 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.MyViewHo
 
         public MyViewHolder(View view) {
             super(view);
-            title = (TextView) view.findViewById(R.id.title);
-            author = (TextView) view.findViewById(R.id.author);
-            link = (TextView) view.findViewById(R.id.link);
-            publishedAt = (TextView) view.findViewById(R.id.publishedAt);
+            title = view.findViewById(R.id.title);
+            author = view.findViewById(R.id.author);
+            link = view.findViewById(R.id.link);
+            publishedAt = view.findViewById(R.id.publishedAt);
         }
     }
 

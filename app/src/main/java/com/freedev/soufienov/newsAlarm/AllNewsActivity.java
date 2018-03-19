@@ -1,11 +1,14 @@
-package com.freedev.soufienov.allnews;
+package com.freedev.soufienov.newsAlarm;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -41,6 +44,7 @@ public class AllNewsActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private ArticleAdapter aAdapter;
     private String category;
+    AlarmManager alarmManager;
     final CharSequence colors[] = new CharSequence[] {"All","UK","USA","Argentina","Australia","Austria","Belgium","Brazil",
             "Bulgaria","Canada","China","Colombia","Cuba","Czech Rp","Egypt","France","Germany","Greece",
             "Hungary","India","Indonesia","Israel","Italy","Japan","Mexico","Netherlands","Nigeria","Portugal","Poland","Romania","Russia","Saudi","Korea","Switzerland","Taiwan",
@@ -53,6 +57,7 @@ public class AllNewsActivity extends AppCompatActivity {
     private String country;
 String[] languages={"ar","de","en","es","fr","he","it","nl","no","pt","ru","se","ud","zh"};
     private SearchView searchView;
+    private TextToSpeech t1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +70,10 @@ String[] languages={"ar","de","en","es","fr","he","it","nl","no","pt","ru","se",
         progressBar= findViewById(R.id.progressBar2);
         searchView= findViewById(R.id.searchView);
         searchView.setQueryHint("Search here");
-searchView.setActivated(true);
+
+
+
+        searchView.setActivated(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
@@ -179,10 +187,15 @@ category=(category=="all")? "general":category;
        String url= link.getText().toString();
         TextView title= (TextView) linearLayout.getChildAt(0);
         String tit= title.getText().toString();
-        Intent browserIntent = new Intent(AllNewsActivity.this,WebviewActivity.class);
+            Intent browserIntent = new Intent(AllNewsActivity.this,Alarm.class);
+            browserIntent.putExtra("title",tit);
+            PendingIntent pi=PendingIntent.getBroadcast(getApplicationContext(),0,browserIntent,0);
+alarmManager= (AlarmManager) getSystemService(ALARM_SERVICE);
+alarmManager.set(AlarmManager.RTC_WAKEUP,System.currentTimeMillis()+10000,pi);
+        /*
         browserIntent.putExtra("link",url);
-        browserIntent.putExtra("title",tit);
-        startActivity(browserIntent);}
+
+        startActivity(browserIntent);*/}
         else showAlert();
     }
 

@@ -1,4 +1,4 @@
-package com.freedev.soufienov.allnews;
+package com.freedev.soufienov.newsAlarm;
 
 import android.content.Intent;
 import android.os.Bundle;

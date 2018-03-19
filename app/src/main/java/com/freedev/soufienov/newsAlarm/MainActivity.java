@@ -1,4 +1,4 @@
-package com.freedev.soufienov.allnews;
+package com.freedev.soufienov.newsAlarm;
 
 import android.content.Context;
 import android.content.DialogInterface;

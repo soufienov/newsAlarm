@@ -1,4 +1,4 @@
-package com.freedev.soufienov.allnews;
+package com.freedev.soufienov.newsAlarm;
 
 
 import org.json.JSONException;
