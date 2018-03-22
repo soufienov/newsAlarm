@@ -1,5 +1,6 @@
 package com.freedev.soufienov.newsAlarm;
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,26 +11,36 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private AdView mAdView;
+    DatabaseHelper databaseHelper;
+    private List<AlarmModel> alarmModelList = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private ProgressBar progressBar;
+    private AlarmModelAdapter aAdapter;
     String countryCode;
     String[] countries;
     ActionBar actionbar;
     TextView textview;
-    RelativeLayout.LayoutParams layoutparams;
+    LinearLayout.LayoutParams layoutparams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +51,23 @@ public class MainActivity extends AppCompatActivity {
         "hu","in","id","il","it","jp","mx","nl","ng","pl","pt",
         "ro","ru","sa","kr","ch","tw",
         "th","tr","ae","ua","gb","us","ve"};
-        setContentView(R.layout.activity_main);
-     ActionBarTitleGravity();
+        setContentView(R.layout.home);
+ /*   ActionBarTitleGravity();
         MobileAds.initialize(this, "ca-app-pub-7106139341895351~8411780987");
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        mAdView.loadAd(adRequest);*/
+        databaseHelper=new DatabaseHelper(this);
+          aAdapter = new AlarmModelAdapter(alarmModelList);
 
-        TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        recyclerView= findViewById(R.id.alarmsRecycler);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(aAdapter);
+        getAlarmsList();
+       AlarmManager alarmManager= (AlarmManager) getSystemService(ALARM_SERVICE);
+ TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
          countryCode = tm.getSimCountryIso();
 if(!Arrays.asList(countries).contains(countryCode)){countryCode="all";}
     }
@@ -61,6 +81,16 @@ if(!Arrays.asList(countries).contains(countryCode)){countryCode="all";}
        intent.putExtra("loc",countryCode);
             if(isInternetAvailable()){startActivity(intent);}
         else showAlert();
+
+    }
+    public void setAlarm(View v){
+        try {
+            Intent i=new Intent(this,NewsAlarm.class);
+            startActivityForResult(i,0);
+        }
+        catch (Exception e){Log.e("sit",e.getMessage());
+        }
+
 
     }
     public boolean isInternetAvailable() {
@@ -92,7 +122,7 @@ if(!Arrays.asList(countries).contains(countryCode)){countryCode="all";}
 
         textview = new TextView(getApplicationContext());
 
-        layoutparams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
         textview.setLayoutParams(layoutparams);
 
@@ -108,5 +138,22 @@ if(!Arrays.asList(countries).contains(countryCode)){countryCode="all";}
 
         actionbar.setCustomView(textview);
 
+    }
+
+    public void getAlarmsList() {
+alarmModelList.clear();
+
+alarmModelList.addAll(databaseHelper.getAllAlarms());
+           aAdapter.notifyDataSetChanged();
+
+
+
+    }
+    public void editAlarm(View view){
+        Intent intent=new Intent(this,NewsAlarm.class);
+         LinearLayout linearLayout=(LinearLayout) view;
+        TextView textView=(TextView)linearLayout.getChildAt(2);
+        intent.putExtra("id",textView.getText());
+startActivityForResult(intent,1);
     }
 }

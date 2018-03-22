@@ -1,10 +1,7 @@
 package com.freedev.soufienov.newsAlarm;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,7 +41,6 @@ public class AllNewsActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private ArticleAdapter aAdapter;
     private String category;
-    AlarmManager alarmManager;
     final CharSequence colors[] = new CharSequence[] {"All","UK","USA","Argentina","Australia","Austria","Belgium","Brazil",
             "Bulgaria","Canada","China","Colombia","Cuba","Czech Rp","Egypt","France","Germany","Greece",
             "Hungary","India","Indonesia","Israel","Italy","Japan","Mexico","Netherlands","Nigeria","Portugal","Poland","Romania","Russia","Saudi","Korea","Switzerland","Taiwan",
@@ -186,12 +182,8 @@ category=(category=="all")? "general":category;
        TextView link= (TextView) linearLayout.getChildAt(2);
        String url= link.getText().toString();
         TextView title= (TextView) linearLayout.getChildAt(0);
-        String tit= title.getText().toString();
-            Intent browserIntent = new Intent(AllNewsActivity.this,Alarm.class);
-            browserIntent.putExtra("title",tit);
-            PendingIntent pi=PendingIntent.getBroadcast(getApplicationContext(),0,browserIntent,0);
-alarmManager= (AlarmManager) getSystemService(ALARM_SERVICE);
-alarmManager.set(AlarmManager.RTC_WAKEUP,System.currentTimeMillis()+10000,pi);
+
+
         /*
         browserIntent.putExtra("link",url);
 
@@ -222,6 +214,7 @@ alarmManager.set(AlarmManager.RTC_WAKEUP,System.currentTimeMillis()+10000,pi);
 
         return cm.getActiveNetworkInfo() != null;
     }
+
     public  void showAlert(){
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

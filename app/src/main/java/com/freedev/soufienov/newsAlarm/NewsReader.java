@@ -15,7 +15,6 @@ import java.util.Locale;
 
 public class NewsReader extends AppCompatActivity {
     private android.speech.tts.TextToSpeech t1;
-
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.set_alarm);
@@ -42,4 +41,6 @@ public class NewsReader extends AppCompatActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
     }
+
+
 }

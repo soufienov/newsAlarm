@@ -11,6 +11,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+
         android:layout_marginTop="8dp"
         android:clickable="false"
         android:timePickerMode="spinner"
@@ -52,34 +53,37 @@
         android:id="@+id/editText4"
         android:layout_width="86dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
+        android:layout_marginBottom="112dp"
+        android:layout_marginStart="8dp"
         android:ems="10"
         android:text="Repeat"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Spinner
+    <Button
         android:id="@+id/info"
-        android:layout_width="260dp"
-        android:layout_height="43dp"
+        android:layout_width="195dp"
+        android:layout_height="44dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="40dp"
         android:layout_marginTop="8dp"
+        android:onClick="popInfo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/timePicker4"
-        app:layout_constraintVertical_bias="0.082">
+        app:layout_constraintVertical_bias="0.0">
 
-    </Spinner>
+    </Button>
 
-    <Spinner
+    <Button
         android:id="@+id/lang"
-        android:layout_width="245dp"
-        android:layout_height="43dp"
+        android:layout_width="203dp"
+        android:layout_height="45dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:onClick="popLang"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.813"
@@ -87,19 +91,35 @@
         app:layout_constraintTop_toBottomOf="@+id/info"
         app:layout_constraintVertical_bias="0.055" />
 
-    <Spinner
+    <Button
         android:id="@+id/days"
-        android:layout_width="223dp"
-        android:layout_height="49dp"
+        android:layout_width="184dp"
+        android:layout_height="47dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:onClick="popDays"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.237"
+        app:layout_constraintHorizontal_bias="0.644"
         app:layout_constraintStart_toEndOf="@+id/editText4"
         app:layout_constraintTop_toBottomOf="@+id/lang"
-        app:layout_constraintVertical_bias="0.571" />
+        app:layout_constraintVertical_bias="0.019" />
+
+    <Button
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Save"
+        android:onClick="setAlarmClock"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/days" />
 
 </android.support.constraint.ConstraintLayout>
