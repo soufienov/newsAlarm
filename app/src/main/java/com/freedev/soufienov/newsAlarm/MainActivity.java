@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
 
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         "ro","ru","sa","kr","ch","tw",
         "th","tr","ae","ua","gb","us","ve"};
         setContentView(R.layout.home);
+
  /*   ActionBarTitleGravity();
         MobileAds.initialize(this, "ca-app-pub-7106139341895351~8411780987");
         mAdView = findViewById(R.id.adView);
@@ -154,6 +156,16 @@ alarmModelList.addAll(databaseHelper.getAllAlarms());
          LinearLayout linearLayout=(LinearLayout) view;
         TextView textView=(TextView)linearLayout.getChildAt(2);
         intent.putExtra("id",textView.getText());
-startActivityForResult(intent,1);
+startActivityForResult(intent,2);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Toast.makeText(this,"Alarm created",Toast.LENGTH_SHORT);
+        if (requestCode==1 && resultCode==1){
+            Toast.makeText(this,"Alarm created",Toast.LENGTH_SHORT);}
+        if (requestCode==2 && resultCode==1){
+            Toast.makeText(this,"Alarm edited",Toast.LENGTH_SHORT);}
     }
 }

@@ -15,8 +15,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TimePicker;
 
+import java.util.Calendar;
+
 /**
  * Created by user on 21/03/2018.
+ * New alarms are set from here
+ * Editing alarms is done from this class
  */
 
 public class NewsAlarm extends Activity{
@@ -60,7 +64,8 @@ CharSequence[] langs={"English","French","Spanish","Germain","Chinese","Japanese
                     String timeString=""+String.format("%02d", timePicker.getHour())+":"+String.format("%02d", timePicker.getMinute());
                     alarmModel.setCategory(info_category);alarmModel.setLanguage(language);
                     alarmModel.setTime(timeString);
-                    int id= databaseHelper.updateAlarm(alarmModel);
+                    int id= databaseHelper.updateAlarm(alarmModel);setResult(1);finish();
+
                 }
             });
         }
@@ -114,47 +119,47 @@ CharSequence[] langs={"English","French","Spanish","Germain","Chinese","Japanese
         // Check which checkbox was clicked
         switch(view.getId()) {
             case R.id.every_day:
-                if (checked){every_day="every day";}
+                if (checked){every_day="Every day";}
                 // Put some meat on the sandwich
                 else
                     every_day="";
                     break;
             case R.id.monday:
-                if (checked){monday="monday,";}
+                if (checked){monday="Monday,";}
                 // Cheese me
                 else
                    monday="";
                     break;
             case R.id.tuesday:
-                if (checked){tuesday="tuesday,";}
+                if (checked){tuesday="Tuesday,";}
                 // Cheese me
                 else
                     tuesday="";
                 break; case R.id.wednesday:
-                if (checked){wednesday="wednesday,";}
+                if (checked){wednesday="Wednesday,";}
                 // Cheese me
                 else
                     wednesday="";
                 break; case R.id.thursday:
-                if (checked){thursday="thursday,";}
+                if (checked){thursday="Thursday,";}
                 // Cheese me
                 else
                     thursday="";
                 break; case R.id.friday:
-                if (checked){friday="friday,";}
+                if (checked){friday="Friday,";}
                 // Cheese me
                 else
                     friday="";
                 break;
                 // TODO: Veggie sandwich
             case R.id.saturday:
-                if (checked){saturday="saturday,";}
+                if (checked){saturday="Saturday,";}
                 // Cheese me
                 else
                     saturday="";
                 break;
                 case R.id.sunday:
-                if (checked){sunday="sunday";}
+                if (checked){sunday="Sunday";}
                 // Cheese me
                 else
                     sunday="";
@@ -163,20 +168,36 @@ CharSequence[] langs={"English","French","Spanish","Germain","Chinese","Japanese
     }
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void setAlarmClock(View v){
-        String tit= "wake up you are late";
+        String tit= "wake up you are late, if u don't i will continue to say rubbish please wakeup now!!";
         Intent browserIntent = new Intent(NewsAlarm.this,Alarm.class);
         browserIntent.putExtra("title",tit);
 if(!every_day.isEmpty()) repeat=every_day;
 else repeat=monday+tuesday+wednesday+thursday+friday+saturday+sunday;
 if (repeat.endsWith(",")) repeat=repeat.substring(0,repeat.length());
-Log.e("repe",repeat);
         String timeString=""+String.format("%02d", timePicker.getHour())+":"+String.format("%02d", timePicker.getMinute());
       alarmModel=new AlarmModel(0,info_category,timeString,repeat,language,"first");
      int id=(int) databaseHelper.insertAlarm(alarmModel);
      alarmModel.setId(id);
-        Log.e("alrm",alarmModel.toString());
+browserIntent.putExtra("alarm_id",id);
+browserIntent.putExtra("alarm_repeat",repeat);
+
         PendingIntent pi= PendingIntent.getBroadcast(getApplicationContext(),id,browserIntent,0);
+        setAlarmManager(pi);this.setResult(1);
+finish();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void setAlarmManager(PendingIntent pi){
+int hours =timePicker.getHour();
+int mins =timePicker.getMinute();
+        Log.e("h:",""+hours);
+        Log.e("m:",""+mins);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
+        calendar.set(Calendar.MINUTE, timePicker.getMinute());
         alarmManager= (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP,System.currentTimeMillis()+10000,pi);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pi);
     }
     }
