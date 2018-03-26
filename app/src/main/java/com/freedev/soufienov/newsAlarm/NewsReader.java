@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -18,18 +20,27 @@ import java.util.Locale;
 
 public class NewsReader extends AppCompatActivity {
     private android.speech.tts.TextToSpeech t1;
+    private List<String> articleList = new ArrayList<>();
+
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wakedup_screen);
+articleList=getIntent().getStringArrayListExtra("articles");
+        Log.e("ttest",articleList.get(0));
 
         try{   t1=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if(status != TextToSpeech.ERROR) {
-                    t1.setLanguage(Locale.ENGLISH);
+                    Locale lc=new Locale(getIntent().getStringExtra("language"));
+                    t1.setLanguage(lc);
                     String title=getIntent().getStringExtra("title");
                     unlockScreen();
+                    if(articleList.isEmpty())
                     t1.speak(title, TextToSpeech.QUEUE_FLUSH, null);
+                    else
+                        t1.speak(articleList.get(0), TextToSpeech.QUEUE_FLUSH, null);
+
                 }
             }
         });
