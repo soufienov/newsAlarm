@@ -29,7 +29,7 @@ import java.util.Locale;
  */
 
 public class Alarm extends BroadcastReceiver {
-
+Intent myIntent;
     String category,language;
     private List<String> articleList = new ArrayList<>();
     @Override
@@ -43,10 +43,9 @@ String alarm_repeat=intent.getStringExtra("alarm_repeat");
         {Log.e("lol"," today");
             category=intent.getStringExtra("category");
             language=intent.getStringExtra("alarm_country");
-           // SendRequest(context);
-            intent.putExtra("articles",articleList.toArray());
-            intent.setClass(context,NewsReader.class);
-  context.startActivity(intent);}
+         myIntent=intent;
+            SendRequest(context);
+           }
   else Log.e("lol","not today");
     }
     private  void  SendRequest(Context ctx){
@@ -69,6 +68,9 @@ String alarm_repeat=intent.getStringExtra("alarm_repeat");
 
 
                             }
+                              myIntent.putExtra("articles",articleList.toArray());
+            myIntent.setClass(context,NewsReader.class);
+  context.startActivity(myIntent);
                         } catch (JSONException e) {     Log.e("pig"," onday");
 
                             e.printStackTrace();
