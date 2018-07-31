@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.freedev.soufienov.newsAlarm">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <application
@@ -20,11 +17,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.freedev.soufienov.newsAlarm.AllNewsActivity"
-         />
-        <activity android:name="com.freedev.soufienov.newsAlarm.WebviewActivity"></activity>
-        <activity android:name="com.freedev.soufienov.newsAlarm.NewsReader"></activity>
         <activity android:name="com.freedev.soufienov.newsAlarm.NewsAlarm"></activity>
+        <activity android:name="com.freedev.soufienov.newsAlarm.WakeupActivity"></activity>
 
         <receiver android:name=".Alarm"/>
     </application>

@@ -18,8 +18,6 @@ import android.widget.CheckBox;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by user on 21/03/2018.
@@ -28,24 +26,15 @@ import java.util.Map;
  */
 
 public class NewsAlarm extends Activity{
-    Button info,lang,save;
-    String info_category="General";
+    Button save;
     AlarmManager alarmManager;
     TimePicker timePicker;
     AlarmModel alarmModel;
     DatabaseHelper databaseHelper;
     Intent intent;
-CharSequence[] infos={"General","Sports","Entertainment","Business","Sciences","Technology"};
-CharSequence[] langs={"English","French","Spanish","Germain","Chinese","Japanese"};
-    String[]countries= new String[]{"gb","us","ar","au","at","be","br",
-            "bg","ca","cn","co","cu","cz","eg","fr","de","gr",
-            "hu","in","id","il","it","jp","mx","nl","ng","pt","pl",
-            "ro","ru","sa","kr","ch","tw",
-            "th","tr","ae","ua","ve"};
-    Map<String, String> map = new HashMap<String, String>();
 
     private String language="English",id,every_day="",monday="",tuesday="",wednesday="",thursday="",friday="",saturday="",sunday="";
-    private String repeat,alarm_country;
+    private String repeat;
     private long Time_Toget_Data=30*1000;
     private String countryCode;
 
@@ -53,17 +42,10 @@ CharSequence[] langs={"English","French","Spanish","Germain","Chinese","Japanese
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.set_alarm);
-        map.put("English","gb,us,au,in,ng");
-        map.put("Spanish","co,mx,ve,pt,br");
-        map.put("French","fr,br,ca");
-        map.put("German","de,at");
-        map.put("Chinese","ch");
-        map.put("Japanese","jp");
+
         TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         countryCode = tm.getSimCountryIso();
         databaseHelper=new DatabaseHelper(this);
-        info= findViewById(R.id.info);
-        lang= findViewById(R.id.lang);
         save= findViewById(R.id.save);
         intent=getIntent();
         timePicker= findViewById(R.id.timePicker4);
@@ -73,10 +55,6 @@ CharSequence[] langs={"English","French","Spanish","Germain","Chinese","Japanese
         {id=intent.getStringExtra("id");
            // Log.e("editing",id);
           alarmModel= databaseHelper.getAlarmModel(Long.parseLong(id));
-          info_category=alarmModel.getCategory();
-          info.setText(info_category);
-          language=alarmModel.getLanguage();
-          lang.setText(language);
           String time=alarmModel.getTime();
           timePicker.setHour(Integer.parseInt(time.substring(0,2)));
           timePicker.setMinute(Integer.parseInt(time.substring(3,5)));
@@ -84,9 +62,6 @@ CharSequence[] langs={"English","French","Spanish","Germain","Chinese","Japanese
                 @Override
                 public void onClick(View view) {
                     String timeString=""+String.format("%02d", timePicker.getHour())+":"+String.format("%02d", timePicker.getMinute());
-                    alarmModel.setCategory(info_category);
-                    alarmModel.setLanguage(language);
-                    setAlarmCountry();
                     alarmModel.setTime(timeString);
                     if(!every_day.isEmpty()) repeat=every_day;
                     else repeat=monday+tuesday+wednesday+thursday+friday+saturday+sunday;
@@ -100,9 +75,6 @@ CharSequence[] langs={"English","French","Spanish","Germain","Chinese","Japanese
                     browserIntent.putExtra("alarm_id",id);
                     browserIntent.putExtra("alarm_repeat",repeat);
 
-                    browserIntent.putExtra("category",info_category);
-                    browserIntent.putExtra("alarm_country",alarm_country);
-                    browserIntent.putExtra("language",language);
                     PendingIntent pi= PendingIntent.getBroadcast(getApplicationContext(),id,browserIntent,0);
                     setAlarmManager(pi);
 
@@ -116,11 +88,7 @@ CharSequence[] langs={"English","French","Spanish","Germain","Chinese","Japanese
 
        }
 
-    private void setAlarmCountry() {
-        alarm_country=map.get(language);
-        if(alarm_country.contains(countryCode)){alarm_country=countryCode;}
-        else alarm_country=alarm_country.substring(0,2);
-    }
+  
 
     public void popDays(View view) {
 
@@ -130,36 +98,6 @@ CharSequence[] langs={"English","French","Spanish","Germain","Chinese","Japanese
         builder.setNegativeButton("Cancel",null);
         builder.setView(R.layout.days_layout);
         builder.show();
-    }
-    public void popInfo(View view) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose a category");
-        builder.setPositiveButton("OK",null);
-        builder.setNegativeButton("Cancel",null);
-        builder.setItems(infos, new DialogInterface.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                 info_category=infos[which].toString();
-                info.setText(info_category);
-            }
-        });        builder.show();
-    }
-    public void popLang(View view) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose a category");
-        builder.setPositiveButton("OK",null);
-        builder.setNegativeButton("Cancel",null);
-        builder.setItems(langs, new DialogInterface.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                language=langs[which].toString();
-                lang.setText(language);
-            }
-        });        builder.show();
     }
     public void onCheckboxClicked(View view) {
         // Is the view now checked?
@@ -224,16 +162,12 @@ if(!every_day.isEmpty()) repeat=every_day;
 else repeat=monday+tuesday+wednesday+thursday+friday+saturday+sunday;
 if (repeat.endsWith(",")) repeat=repeat.substring(0,repeat.length()-1);
         String timeString=""+String.format("%02d", timePicker.getHour())+":"+String.format("%02d", timePicker.getMinute());
-      alarmModel=new AlarmModel(0,info_category,timeString,repeat,language,"first");
+      alarmModel=new AlarmModel(0,timeString,repeat,"first");
      int id=(int) databaseHelper.insertAlarm(alarmModel);
      alarmModel.setId(id);
-        setAlarmCountry();
 
         browserIntent.putExtra("alarm_id",id);
 browserIntent.putExtra("alarm_repeat",repeat);
-browserIntent.putExtra("category",info_category);
-browserIntent.putExtra("alarm_country",alarm_country);
-        browserIntent.putExtra("language",language);
 
         PendingIntent pi= PendingIntent.getBroadcast(getApplicationContext(),id,browserIntent,0);
         setAlarmManager(pi);this.setResult(1);

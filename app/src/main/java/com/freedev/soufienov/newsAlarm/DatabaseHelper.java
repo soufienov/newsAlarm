@@ -45,7 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long insertAlarm(String name,String repeat,String time,String category,String language) {
+    public long insertAlarm(String name,String repeat,String time) {
         // get writable database as we want to write data
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -55,8 +55,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(AlarmModel.COLUMN_NAME, name);
         values.put(AlarmModel.COLUMN_REPEAT, repeat);
         values.put(AlarmModel.COLUMN_TIME, time);
-        values.put(AlarmModel.COLUMN_CAT, category);
-        values.put(AlarmModel.COLUMN_LANG, language);
 
         // insert row
         long id = db.insert(AlarmModel.TABLE_NAME, null, values);
@@ -77,8 +75,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(AlarmModel.COLUMN_NAME, alarmModel.getName());
         values.put(AlarmModel.COLUMN_REPEAT, alarmModel.getRepeat());
         values.put(AlarmModel.COLUMN_TIME, alarmModel.getTime());
-        values.put(AlarmModel.COLUMN_CAT, alarmModel.getCategory());
-        values.put(AlarmModel.COLUMN_LANG, alarmModel.getLanguage());
 
         // insert row
         long id = db.insert(AlarmModel.TABLE_NAME, null, values);
@@ -94,7 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(AlarmModel.TABLE_NAME,
-                new String[]{AlarmModel.COLUMN_ID, AlarmModel.COLUMN_CAT, AlarmModel.COLUMN_TIME,AlarmModel.COLUMN_LANG,AlarmModel.COLUMN_NAME,AlarmModel.COLUMN_REPEAT},
+                new String[]{AlarmModel.COLUMN_ID,  AlarmModel.COLUMN_TIME,AlarmModel.COLUMN_NAME,AlarmModel.COLUMN_REPEAT},
                 AlarmModel.COLUMN_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
 
@@ -104,10 +100,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // prepare note object
         AlarmModel alarmModel = new AlarmModel(
                 cursor.getInt(cursor.getColumnIndex(AlarmModel.COLUMN_ID)),
-                cursor.getString(cursor.getColumnIndex(AlarmModel.COLUMN_CAT)),
                 cursor.getString(cursor.getColumnIndex(AlarmModel.COLUMN_TIME)),
                 cursor.getString(cursor.getColumnIndex(AlarmModel.COLUMN_REPEAT)),
-                cursor.getString(cursor.getColumnIndex(AlarmModel.COLUMN_LANG)),
                 cursor.getString(cursor.getColumnIndex(AlarmModel.COLUMN_NAME))
                );
 
@@ -134,9 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 alarmModel.setId(cursor.getInt(cursor.getColumnIndex(AlarmModel.COLUMN_ID)));
                 alarmModel.setName(cursor.getString(cursor.getColumnIndex(AlarmModel.COLUMN_NAME)));
                 alarmModel.setTime(cursor.getString(cursor.getColumnIndex(AlarmModel.COLUMN_TIME)));
-                alarmModel.setLanguage(cursor.getString(cursor.getColumnIndex(AlarmModel.COLUMN_LANG)));
                 alarmModel.setRepeat(cursor.getString(cursor.getColumnIndex(AlarmModel.COLUMN_REPEAT)));
-                alarmModel.setCategory(cursor.getString(cursor.getColumnIndex(AlarmModel.COLUMN_CAT)));
 
                 notes.add(alarmModel);
             } while (cursor.moveToNext());
@@ -169,8 +161,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(AlarmModel.COLUMN_NAME, alarmModel.getName());
         values.put(AlarmModel.COLUMN_REPEAT, alarmModel.getRepeat());
         values.put(AlarmModel.COLUMN_TIME, alarmModel.getTime());
-        values.put(AlarmModel.COLUMN_CAT, alarmModel.getCategory());
-        values.put(AlarmModel.COLUMN_LANG, alarmModel.getLanguage());
 
         // updating row
         return db.update(AlarmModel.TABLE_NAME, values, AlarmModel.COLUMN_ID + " = ?",

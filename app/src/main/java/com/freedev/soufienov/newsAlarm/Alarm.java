@@ -5,22 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -29,11 +17,11 @@ import java.util.Locale;
  */
 
 public class Alarm extends BroadcastReceiver {
-Intent myIntent;
-    String category,language;
-    private List<String> articleList = new ArrayList<>();
+Intent myIntent;Context CTX;
+    String news=" eee ";
     @Override
     public void onReceive(Context context, Intent intent) {
+        CTX=context;
   intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |  Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 String alarm_repeat=intent.getStringExtra("alarm_repeat");
         Calendar calendar=Calendar.getInstance();
@@ -41,48 +29,9 @@ String alarm_repeat=intent.getStringExtra("alarm_repeat");
         String day=new SimpleDateFormat("EEEE", Locale.ENGLISH).format(date.getTime());
         if (alarm_repeat.contains(day)||alarm_repeat.contains("Every day"))
         {Log.e("lol"," today");
-            category=intent.getStringExtra("category");
-            language=intent.getStringExtra("alarm_country");
-         myIntent=intent;
-            SendRequest(context);
+            myIntent=new Intent(CTX,WakeupActivity.class);
+            CTX.startActivity(myIntent);
            }
-  else Log.e("lol","not today");
     }
-    private  void  SendRequest(Context ctx){
-
-        RequestQueue queue = Volley.newRequestQueue(ctx);
-        String url ="https://newsapi.org/v2/top-headlines?"+"category=" +category+"&country=" +language+
-                "&apiKey=59514c0e996a4982b784153d6a7762f3";
-
-        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url,null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject  response)  {
-                        try {articleList.clear();
-                            JSONArray articles= (JSONArray) response.get("articles");
-                            for (int i = 0 ; i < articles.length(); i++) {
-                                JSONObject art= articles.getJSONObject(i);
-                                Article article= new Article(art);
-                                Log.e("log"," today");
-                                articleList.add(article.title);
-
-
-                            }
-                              myIntent.putExtra("articles",articleList.toArray());
-            myIntent.setClass(context,NewsReader.class);
-  context.startActivity(myIntent);
-                        } catch (JSONException e) {     Log.e("pig"," onday");
-
-                            e.printStackTrace();
-
-                        }
-                    }}, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        queue.add(stringRequest);
-
-    }
+   
 }

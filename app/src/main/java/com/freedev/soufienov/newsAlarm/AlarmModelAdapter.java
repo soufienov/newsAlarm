@@ -16,16 +16,14 @@ import java.util.List;
 public class AlarmModelAdapter extends RecyclerView.Adapter<AlarmModelAdapter.MyViewHolder>{
     private List<AlarmModel> alarmModelList;
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, time, repeat,category,language,id;
+        public TextView name, time, repeat,id;
 
         public MyViewHolder(View view) {
             super(view);
             name = view.findViewById(R.id.name);
             time = view.findViewById(R.id.time);
             id = view.findViewById(R.id.id);
-            category = view.findViewById(R.id.category);
             repeat = view.findViewById(R.id.repeat);
-            language = view.findViewById(R.id.language);
 
         }
     }
@@ -48,8 +46,6 @@ public class AlarmModelAdapter extends RecyclerView.Adapter<AlarmModelAdapter.My
 
         AlarmModel alarmModel = alarmModelList.get(position);
         holder.name.setText(alarmModel.getName());
-        holder.category.setText(alarmModel.getCategory());
-        holder.language.setText(alarmModel.getLanguage());
         holder.time.setText(alarmModel.getTime());
         holder.repeat.setText(alarmModel.getRepeat());
         holder.id.setText(""+alarmModel.getId());

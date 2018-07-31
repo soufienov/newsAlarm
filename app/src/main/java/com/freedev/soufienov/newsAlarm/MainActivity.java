@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private AlarmModelAdapter aAdapter;
     String countryCode;
-    String[] countries;
     ActionBar actionbar;
     TextView textview;
     LinearLayout.LayoutParams layoutparams;
@@ -47,12 +46,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        countries= new String[]{"ar","au","at","be","br",
-        "bg","ca","cn","co","cu","cz","eg","fr","de","gr",
-        "hu","in","id","il","it","jp","mx","nl","ng","pl","pt",
-        "ro","ru","sa","kr","ch","tw",
-        "th","tr","ae","ua","gb","us","ve"};
-        setContentView(R.layout.home);
+          setContentView(R.layout.home);
 
  /*   ActionBarTitleGravity();
         MobileAds.initialize(this, "ca-app-pub-7106139341895351~8411780987");
@@ -71,20 +65,9 @@ public class MainActivity extends AppCompatActivity {
        AlarmManager alarmManager= (AlarmManager) getSystemService(ALARM_SERVICE);
  TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
          countryCode = tm.getSimCountryIso();
-if(!Arrays.asList(countries).contains(countryCode)){countryCode="all";}
     }
 
-    public void getNews(View view) {
-
-        Button btn =(Button)view;
-        String cat= btn.getText().toString();
-       Intent intent= new Intent(MainActivity.this,AllNewsActivity.class);
-       intent.putExtra("category",cat);
-       intent.putExtra("loc",countryCode);
-            if(isInternetAvailable()){startActivity(intent);}
-        else showAlert();
-
-    }
+    
     public void setAlarm(View v){
         try {
             Intent i=new Intent(this,NewsAlarm.class);
@@ -95,28 +78,7 @@ if(!Arrays.asList(countries).contains(countryCode)){countryCode="all";}
 
 
     }
-    public boolean isInternetAvailable() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        return cm.getActiveNetworkInfo() != null;
-    }
-    public  void showAlert(){
-        AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(this);
-        }
-        builder.setTitle("No Internet")
-                .setMessage("Please check your intenet connection and try again")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-
-
-                .show();
-    }
     private void ActionBarTitleGravity() {
         // TODO Auto-generated method stub
 
@@ -162,6 +124,7 @@ startActivityForResult(intent,2);
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        getAlarmsList();
         Toast.makeText(this,"Alarm created",Toast.LENGTH_SHORT);
         if (requestCode==1 && resultCode==1){
             Toast.makeText(this,"Alarm created",Toast.LENGTH_SHORT);}
