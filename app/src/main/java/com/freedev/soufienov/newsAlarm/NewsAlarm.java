@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -26,7 +27,7 @@ import java.util.Calendar;
  * Editing alarms is done from this class
  */
 
-public class NewsAlarm extends Activity{
+public class NewsAlarm extends AppCompatActivity {
     Button save,days;
     AlarmManager alarmManager;
     TimePicker timePicker;
@@ -96,31 +97,8 @@ RadioGroup radioGroup;
 
     public void popDays(View view) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose days");
-        builder.setPositiveButton("OK",null);
-        builder.setNegativeButton("Cancel",null);
-        builder.setView(R.layout.repeat_layout);
-        radioGroup=findViewById(R.id.myRadioGroup);
-     //   norepeat=findViewById(R.id.norepeat);
-        try {
-            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-switch (checkedId){
-   case R.id.everyday:everyDayRepeat();break;
-    case R.id.week:weekRepeat();break;
-    case R.id.norepeat:noRepeat();break;
-    case R.id.custom:customRepeat();break;
-
-
-}
-                }
-            });
-        }
-        catch (Exception e){e.printStackTrace();Log}
-
-        builder.show();
+        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
+        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
     }
     public void noRepeat(){}
     public void everyDayRepeat(){}
@@ -182,8 +160,7 @@ switch (checkedId){
         }
         String days_text=monday+" "+tuesday+" "+wednesday+" "+thursday+" "+friday+" "+saturday+" "+sunday;
         days_text=days_text.replaceAll("  "," ");
-        Log.e(every_day,every_day.isEmpty()+"");
-        if(!days_text.isEmpty())
+        if(days_text.length()>0)
         {days.setText(days_text); every_day="";}
     }
     @RequiresApi(api = Build.VERSION_CODES.M)
