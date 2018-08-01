@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +14,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -26,14 +27,15 @@ import java.util.Calendar;
  */
 
 public class NewsAlarm extends Activity{
-    Button save;
+    Button save,days;
     AlarmManager alarmManager;
     TimePicker timePicker;
     AlarmModel alarmModel;
     DatabaseHelper databaseHelper;
     Intent intent;
-
-    private String language="English",id,every_day="",monday="",tuesday="",wednesday="",thursday="",friday="",saturday="",sunday="";
+RadioButton norepeat,everyDayRepeat,weekRepeat,customRepeat;
+RadioGroup radioGroup;
+    private String language="English",id,every_day="Every day",monday="",tuesday="",wednesday="",thursday="",friday="",saturday="",sunday="";
     private String repeat;
     private long Time_Toget_Data=30*1000;
     private String countryCode;
@@ -47,10 +49,11 @@ public class NewsAlarm extends Activity{
         countryCode = tm.getSimCountryIso();
         databaseHelper=new DatabaseHelper(this);
         save= findViewById(R.id.save);
+        days= findViewById(R.id.days);
         intent=getIntent();
         timePicker= findViewById(R.id.timePicker4);
         timePicker.setIs24HourView(true);
-
+        days.setText(every_day);
         try
         {id=intent.getStringExtra("id");
            // Log.e("editing",id);
@@ -58,6 +61,7 @@ public class NewsAlarm extends Activity{
           String time=alarmModel.getTime();
           timePicker.setHour(Integer.parseInt(time.substring(0,2)));
           timePicker.setMinute(Integer.parseInt(time.substring(3,5)));
+          days.setText(alarmModel.getRepeat());
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -96,8 +100,39 @@ public class NewsAlarm extends Activity{
         builder.setTitle("Choose days");
         builder.setPositiveButton("OK",null);
         builder.setNegativeButton("Cancel",null);
+        builder.setView(R.layout.repeat_layout);
+        radioGroup=findViewById(R.id.myRadioGroup);
+     //   norepeat=findViewById(R.id.norepeat);
+        try {
+            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+switch (checkedId){
+   case R.id.everyday:everyDayRepeat();break;
+    case R.id.week:weekRepeat();break;
+    case R.id.norepeat:noRepeat();break;
+    case R.id.custom:customRepeat();break;
+
+
+}
+                }
+            });
+        }
+        catch (Exception e){e.printStackTrace();Log}
+
+        builder.show();
+    }
+    public void noRepeat(){}
+    public void everyDayRepeat(){}
+    public void weekRepeat(){}
+    public void customRepeat(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose days");
+        builder.setPositiveButton("OK",null);
+        builder.setNegativeButton("Cancel",null);
         builder.setView(R.layout.days_layout);
         builder.show();
+
     }
     public void onCheckboxClicked(View view) {
         // Is the view now checked?
@@ -105,15 +140,8 @@ public class NewsAlarm extends Activity{
 
         // Check which checkbox was clicked
         switch(view.getId()) {
-            case R.id.every_day:
-                if (checked){every_day="Every day";}
-                // Put some meat on the sandwich
-                else
-                    every_day="";
-                    break;
-            case R.id.monday:
+               case R.id.monday:
                 if (checked){monday="Monday,";}
-                // Cheese me
                 else
                    monday="";
                     break;
@@ -152,6 +180,11 @@ public class NewsAlarm extends Activity{
                     sunday="";
                 break;
         }
+        String days_text=monday+" "+tuesday+" "+wednesday+" "+thursday+" "+friday+" "+saturday+" "+sunday;
+        days_text=days_text.replaceAll("  "," ");
+        Log.e(every_day,every_day.isEmpty()+"");
+        if(!days_text.isEmpty())
+        {days.setText(days_text); every_day="";}
     }
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void setAlarmClock(View v){
