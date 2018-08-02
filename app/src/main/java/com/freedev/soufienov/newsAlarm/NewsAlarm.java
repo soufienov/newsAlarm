@@ -1,6 +1,5 @@
 package com.freedev.soufienov.newsAlarm;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -99,7 +98,8 @@ RadioGroup radioGroup;
 
         BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
         bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-    }
+   }
+
     public void noRepeat(){}
     public void everyDayRepeat(){}
     public void weekRepeat(){}
