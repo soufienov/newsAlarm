@@ -11,7 +11,6 @@ public class AlarmModel {
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_REPEAT = "repeat";
-
     private int id;
 
     
@@ -36,11 +35,13 @@ public class AlarmModel {
     private String name;
 
 
+
     // Create table SQL query
     public static final String CREATE_TABLE =
             "CREATE TABLE " + TABLE_NAME + "("
                     + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + COLUMN_REPEAT + " TEXT,"
+
                     + COLUMN_NAME + " TEXT,"
                     + COLUMN_TIME + " TEXT"
                     + ")";

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,7 +26,7 @@ String alarm_repeat=intent.getStringExtra("alarm_repeat");
         Calendar calendar=Calendar.getInstance();
         Date date = calendar.getTime();
         String day=new SimpleDateFormat("EEEE", Locale.ENGLISH).format(date.getTime());
-        if (alarm_repeat.contains(day)||alarm_repeat.contains("Every day"))
+        if (alarm_repeat.contains(day.substring(0,2))||alarm_repeat.contains("Every day"))
         {Log.e("lol"," today");
             myIntent=new Intent(CTX,WakeupActivity.class);
             CTX.startActivity(myIntent);

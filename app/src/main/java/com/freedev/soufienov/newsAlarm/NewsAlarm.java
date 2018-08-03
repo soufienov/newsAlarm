@@ -39,6 +39,7 @@ RadioGroup radioGroup;
     private String repeat;
     private long Time_Toget_Data=30*1000;
     private String countryCode;
+    public boolean editing=true;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void onCreate(Bundle savedInstanceState){
@@ -54,6 +55,8 @@ RadioGroup radioGroup;
         timePicker= findViewById(R.id.timePicker4);
         timePicker.setIs24HourView(true);
         days.setText(every_day);
+        alarmModel=new AlarmModel(0,null,null,"first");
+
         try
         {id=intent.getStringExtra("id");
            // Log.e("editing",id);
@@ -100,16 +103,47 @@ RadioGroup radioGroup;
         bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
    }
 
-    public void noRepeat(){}
-    public void everyDayRepeat(){}
-    public void weekRepeat(){}
-    public void customRepeat(){
+    public void noRepeat(View view){
+        norepeat=(RadioButton)view;
+        if(norepeat.isChecked()){
+
+            every_day="";monday="";tuesday="";wednesday="";thursday="";friday="";saturday="";sunday="";
+        }
+        alarmModel.setRepeat(getRepeatString());
+        days.setText(getRepeatString());
+
+    }
+    public void everyDayRepeat(View view){
+        everyDayRepeat=(RadioButton)view;
+        if(everyDayRepeat.isChecked()){
+
+            every_day="Every day";monday="";tuesday="";wednesday="";thursday="";friday="";saturday="";sunday="";
+        }
+        else {every_day="";}
+        alarmModel.setRepeat(getRepeatString());
+        days.setText(getRepeatString());
+
+    }
+    public void weekRepeat(View view){ weekRepeat=(RadioButton)view;
+        if(weekRepeat.isChecked()){
+            every_day="";  monday="Mon,";tuesday="Tue,";wednesday="Wed,";thursday="Thu,";friday="Fri,";saturday="Sat,";sunday="Sun";
+        }
+        else {every_day="";monday="";tuesday="";wednesday="";thursday="";friday="";saturday="";sunday="";}
+        alarmModel.setRepeat(getRepeatString());
+        days.setText(getRepeatString());
+
+    }
+    public void customRepeat(View view){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose days");
         builder.setPositiveButton("OK",null);
         builder.setNegativeButton("Cancel",null);
         builder.setView(R.layout.days_layout);
-        builder.show();
+
+          builder.show();
+        every_day="";monday="";tuesday="";wednesday="";thursday="";friday="";saturday="";sunday="";
+        days.setText("No repeat");
+
 
     }
     public void onCheckboxClicked(View view) {
@@ -119,40 +153,40 @@ RadioGroup radioGroup;
         // Check which checkbox was clicked
         switch(view.getId()) {
                case R.id.monday:
-                if (checked){monday="Monday,";}
+                if (checked){monday="Mon,";}
                 else
                    monday="";
                     break;
             case R.id.tuesday:
-                if (checked){tuesday="Tuesday,";}
+                if (checked){tuesday="Tue,";}
                 // Cheese me
                 else
                     tuesday="";
                 break; case R.id.wednesday:
-                if (checked){wednesday="Wednesday,";}
+                if (checked){wednesday="Wed,";}
                 // Cheese me
                 else
                     wednesday="";
                 break; case R.id.thursday:
-                if (checked){thursday="Thursday,";}
+                if (checked){thursday="Thu,";}
                 // Cheese me
                 else
                     thursday="";
                 break; case R.id.friday:
-                if (checked){friday="Friday,";}
+                if (checked){friday="Fri,";}
                 // Cheese me
                 else
                     friday="";
                 break;
                 // TODO: Veggie sandwich
             case R.id.saturday:
-                if (checked){saturday="Saturday,";}
+                if (checked){saturday="Sat,";}
                 // Cheese me
                 else
                     saturday="";
                 break;
                 case R.id.sunday:
-                if (checked){sunday="Sunday";}
+                if (checked){sunday="Sun";}
                 // Cheese me
                 else
                     sunday="";
@@ -168,11 +202,11 @@ RadioGroup radioGroup;
         String tit= "wake up you are late, if u don't i will continue to say rubbish please wakeup now!!";
         Intent browserIntent = new Intent(NewsAlarm.this,Alarm.class);
         browserIntent.putExtra("title",tit);
-if(!every_day.isEmpty()) repeat=every_day;
-else repeat=monday+tuesday+wednesday+thursday+friday+saturday+sunday;
-if (repeat.endsWith(",")) repeat=repeat.substring(0,repeat.length()-1);
+
         String timeString=""+String.format("%02d", timePicker.getHour())+":"+String.format("%02d", timePicker.getMinute());
-      alarmModel=new AlarmModel(0,timeString,repeat,"first");
+      alarmModel.setRepeat(getRepeatString());
+      days.setText(getRepeatString());
+      alarmModel.setTime(timeString);
      int id=(int) databaseHelper.insertAlarm(alarmModel);
      alarmModel.setId(id);
 
@@ -183,7 +217,11 @@ browserIntent.putExtra("alarm_repeat",repeat);
         setAlarmManager(pi);this.setResult(1);
 finish();
     }
+private String getRepeatString(){if(!every_day.isEmpty()) repeat=every_day;
+else repeat=monday+tuesday+wednesday+thursday+friday+saturday+sunday;
+    if (repeat.endsWith(",")) repeat=repeat.substring(0,repeat.length()-1);
 
+    return  repeat;}
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void setAlarmManager(PendingIntent pi){
          int hours =timePicker.getHour();

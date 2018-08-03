@@ -31,28 +31,41 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:checked="true"
-                android:text="No repeat" />
+                android:text="No repeat"
+                android:clickable="true"
+                android:onClick="noRepeat"
+
+                />
 
             <RadioButton
                 android:id="@+id/everyday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Every day" />
+                android:text="Every day"
+                android:clickable="true"
+                android:onClick="everyDayRepeat"
+                />
 
             <RadioButton
                 android:id="@+id/week"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Monday to Friday" />
+                android:text="Monday to Friday"
+                android:clickable="true"
+                android:onClick="weekRepeat"
+                />
 
             <RadioButton
                 android:id="@+id/custom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Custom" />
+                android:text="Custom"
+                android:clickable="true"
+                android:onClick="customRepeat"
+                />
         </RadioGroup>
 
         <Space
