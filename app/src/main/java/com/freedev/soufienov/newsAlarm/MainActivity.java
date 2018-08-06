@@ -2,24 +2,20 @@ package com.freedev.soufienov.newsAlarm;
 
 import android.app.AlarmManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,17 +23,13 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private AdView mAdView;
     DatabaseHelper databaseHelper;
-    private List<AlarmModel> alarmModelList = new ArrayList<>();
-    private RecyclerView recyclerView;
-    private ProgressBar progressBar;
+    private ArrayList<AlarmModel> alarmModelList = new ArrayList<>();
+    private ListView listView;
     private AlarmModelAdapter aAdapter;
-    String countryCode;
     ActionBar actionbar;
     TextView textview;
     LinearLayout.LayoutParams layoutparams;
@@ -48,23 +40,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
           setContentView(R.layout.home);
 
- /*   ActionBarTitleGravity();
-        MobileAds.initialize(this, "ca-app-pub-7106139341895351~8411780987");
-        mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);*/
-        databaseHelper=new DatabaseHelper(this);
-          aAdapter = new AlarmModelAdapter(alarmModelList);
+       databaseHelper=new DatabaseHelper(this);
+          aAdapter = new AlarmModelAdapter(this,R.layout.alarm_model,alarmModelList);
 
-        recyclerView= findViewById(R.id.alarmsRecycler);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(aAdapter);
+        listView = findViewById(R.id.alarmsRecycler);
+        listView.setAdapter(aAdapter);
+        listView.setFastScrollEnabled(true);
         getAlarmsList();
-       AlarmManager alarmManager= (AlarmManager) getSystemService(ALARM_SERVICE);
- TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-         countryCode = tm.getSimCountryIso();
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View item, int position, long id){
+               editAlarm(item);
+            }
+        });
     }
 
     

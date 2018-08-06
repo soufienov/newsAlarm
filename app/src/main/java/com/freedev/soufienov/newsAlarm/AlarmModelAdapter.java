@@ -1,58 +1,67 @@
 package com.freedev.soufienov.newsAlarm;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by user on 22/03/2018.
  */
 
-public class AlarmModelAdapter extends RecyclerView.Adapter<AlarmModelAdapter.MyViewHolder>{
-    private List<AlarmModel> alarmModelList;
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+public class AlarmModelAdapter extends ArrayAdapter<AlarmModel> {
+	ArrayList<AlarmModel> alarmModelList;
+	Context context;
+	LayoutInflater inflator;
+	
+	public AlarmModelAdapter(Context context, int resource,	ArrayList<AlarmModel> listOfAlarms) {
+		super(context, resource, listOfAlarms);
+		this.alarmModelList = listOfAlarms;
+		this.context = context;
+		inflator = LayoutInflater.from(context);
+	}
+
+	
+	
+	ViewHolder holder;
+    public class ViewHolder  {
         public TextView name, time, repeat,id;
 
-        public MyViewHolder(View view) {
-            super(view);
-            name = view.findViewById(R.id.name);
-            time = view.findViewById(R.id.time);
-            id = view.findViewById(R.id.id);
-            repeat = view.findViewById(R.id.repeat);
-
-        }
-    }
-
-    public AlarmModelAdapter(List<AlarmModel> alarmModelList) {
-        this.alarmModelList = alarmModelList;
-    }
-    @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.alarm_model, parent, false);
-
-        return new MyViewHolder(itemView);
     }
 
 
-    @Override
-    public void onBindViewHolder(AlarmModelAdapter.MyViewHolder holder, int position) {
-        Log.e("binding","uey");
 
-        AlarmModel alarmModel = alarmModelList.get(position);
-        holder.name.setText(alarmModel.getName());
-        holder.time.setText(alarmModel.getTime());
-        holder.repeat.setText(alarmModel.getRepeat());
-        holder.id.setText(""+alarmModel.getId());
-    }
 
-    @Override
+
     public int getItemCount() {
         return alarmModelList.size();
     }
+		@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		View myView = convertView;
+		if(convertView == null){
+			myView = inflator.inflate(R.layout.alarm_model, parent, false);
+			holder = new ViewHolder();
+			holder.name = (TextView) myView.findViewById(R.id.name);
+			holder.time = (TextView) myView.findViewById(R.id.time);
+			holder.id = (TextView) myView.findViewById(R.id.id);
+			holder.repeat=(TextView)myView.findViewById(R.id.repeat);
+			myView.setTag(holder);
+		}else{
+			holder = (ViewHolder)myView.getTag();
+		}
+		AlarmModel detail = alarmModelList.get(position);
+		holder.name.setText(detail.getName());
+		holder.time.setText(detail.getTime());
+		holder.repeat.setText(detail.getRepeat());
+
+		return myView;
+	}
 }

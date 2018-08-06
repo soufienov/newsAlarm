@@ -1,5 +1,7 @@
 package com.freedev.soufienov.newsAlarm;
 
+import android.util.Log;
+
 /**
  * Created by user on 21/03/2018.
  */
@@ -11,9 +13,40 @@ public class AlarmModel {
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_REPEAT = "repeat";
-    private int id;
+    public static final Boolean COLUMN_ACTIVE =true;
+    public static final Boolean COLUMN_SNOOZED = false;
+    public  static  final  int COLUMN_SNOOZTIME=5;
 
-    
+    private int id;
+    private int snoozTime;
+    private String repeat;
+    private String time;
+    private String name;
+    private boolean active=true,snoozed=false;
+    public int getSnoozTime() {
+        Log.e("tm",snoozTime+""+isActive()+isSnoozed()+"");
+        return snoozTime;
+    }
+
+    public void setSnoozTime(int snoozTime) {
+        this.snoozTime = snoozTime;
+    }
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isSnoozed() {
+        return snoozed;
+    }
+
+    public void setSnoozed(boolean snoozed) {
+        this.snoozed = snoozed;
+    }
+
     public String getRepeat() {
         return repeat;
     }
@@ -30,9 +63,7 @@ public class AlarmModel {
         this.time = time;
     }
 
-    private String repeat;
-    private String time;
-    private String name;
+
 
 
 
@@ -41,7 +72,9 @@ public class AlarmModel {
             "CREATE TABLE " + TABLE_NAME + "("
                     + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + COLUMN_REPEAT + " TEXT,"
-
+                    +COLUMN_ACTIVE+"BOOLEAN,"
+                    +COLUMN_SNOOZED+"BOOLEAN,"
+                    +COLUMN_SNOOZTIME+"INTEGER,"
                     + COLUMN_NAME + " TEXT,"
                     + COLUMN_TIME + " TEXT"
                     + ")";

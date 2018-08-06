@@ -3,6 +3,7 @@ package com.freedev.soufienov.newsAlarm;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -29,9 +31,11 @@ import java.util.Calendar;
 public class NewsAlarm extends AppCompatActivity {
     Button save,days;
     AlarmManager alarmManager;
+    BottomSheetFragment bottomSheetFragment;
     TimePicker timePicker;
     AlarmModel alarmModel;
     DatabaseHelper databaseHelper;
+    Spinner snoozSpinner;
     Intent intent;
 RadioButton norepeat,everyDayRepeat,weekRepeat,customRepeat;
 RadioGroup radioGroup;
@@ -53,18 +57,21 @@ RadioGroup radioGroup;
         days= findViewById(R.id.days);
         intent=getIntent();
         timePicker= findViewById(R.id.timePicker4);
+        snoozSpinner=findViewById(R.id.spinnerSnooz);
+        snoozSpinner.setSelection(2);
         timePicker.setIs24HourView(true);
         days.setText(every_day);
         alarmModel=new AlarmModel(0,null,null,"first");
 
         try
         {id=intent.getStringExtra("id");
-           // Log.e("editing",id);
+            alarmModel.getSnoozTime();
           alarmModel= databaseHelper.getAlarmModel(Long.parseLong(id));
           String time=alarmModel.getTime();
           timePicker.setHour(Integer.parseInt(time.substring(0,2)));
           timePicker.setMinute(Integer.parseInt(time.substring(3,5)));
           days.setText(alarmModel.getRepeat());
+          snoozSpinner.setSelection(alarmModel.getSnoozTime());
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -74,6 +81,8 @@ RadioGroup radioGroup;
                     else repeat=monday+tuesday+wednesday+thursday+friday+saturday+sunday;
                     if (repeat.endsWith(",")) repeat=repeat.substring(0,repeat.length()-1);
                     alarmModel.setRepeat(repeat);
+                    Log.e("sn",snoozSpinner.getSelectedItemPosition()+"");
+                    alarmModel.setSnoozTime((snoozSpinner.getSelectedItemPosition()));
                     int id= databaseHelper.updateAlarm(alarmModel);
                     //ecraser l'intent
                     String tit= "wake up you are late, if u don't i will continue to say rubbish please wakeup now!!";
@@ -99,7 +108,7 @@ RadioGroup radioGroup;
 
     public void popDays(View view) {
 
-        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
+       bottomSheetFragment = new BottomSheetFragment();
         bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
    }
 
@@ -144,7 +153,18 @@ RadioGroup radioGroup;
         every_day="";monday="";tuesday="";wednesday="";thursday="";friday="";saturday="";sunday="";
         days.setText("No repeat");
 
+builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        monday="";tuesday="";wednesday="";thursday="";friday="";saturday="";sunday="";    }
+});
+builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        bottomSheetFragment.dismiss();
 
+    }
+});
     }
     public void onCheckboxClicked(View view) {
         // Is the view now checked?
@@ -209,7 +229,7 @@ RadioGroup radioGroup;
       alarmModel.setTime(timeString);
      int id=(int) databaseHelper.insertAlarm(alarmModel);
      alarmModel.setId(id);
-
+alarmModel.setSnoozTime(snoozSpinner.getSelectedItemPosition());
         browserIntent.putExtra("alarm_id",id);
 browserIntent.putExtra("alarm_repeat",repeat);
 

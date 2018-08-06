@@ -11,26 +11,15 @@
 
     <string name="title_activity_news">NewsActivity</string>
 
-    <string-array name="lang">
-        <item>English</item>
-        <item>French</item>
-        <item>Spanish</item>
+    <string-array name="snooz">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
 
-        <item>Germain</item>
-        <item>Chinese</item>
-        <item>Japanese</item>
-
-
-    </string-array>
-    <string-array name="info">
-        <item>General</item>
-        <item>Sports</item>
-        <item>Entertainment</item>
-
-        <item>Business</item>
-        <item>Sciences</item>
-        <item>Tech</item>
+        <item>15</item>
+        <item>30</item>
 
 
     </string-array>
+
 </resources>

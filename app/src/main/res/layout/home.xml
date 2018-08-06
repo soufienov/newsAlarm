@@ -3,24 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <Button
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/button9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="+ Alarm"
+    android:layout_gravity="bottom|end"
+        android:background="@color/colorPrimary"
         android:onClick="setAlarm"
         />
-    <android.support.v7.widget.RecyclerView
+    <ListView
         android:id="@+id/alarmsRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    </android.support.v7.widget.RecyclerView>
+    </ListView>
 
 
 </LinearLayout>
