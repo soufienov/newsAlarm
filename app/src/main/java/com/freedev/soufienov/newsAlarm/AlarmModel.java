@@ -13,9 +13,9 @@ public class AlarmModel {
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_REPEAT = "repeat";
-    public static final Boolean COLUMN_ACTIVE =true;
-    public static final Boolean COLUMN_SNOOZED = false;
-    public  static  final  int COLUMN_SNOOZTIME=5;
+    public static final  String COLUMN_ACTIVE ="active";
+    public static final String COLUMN_SNOOZED = "snoozed";
+    public  static  final  String COLUMN_SNOOZTIME="snoozTime";
 
     private int id;
     private int snoozTime;

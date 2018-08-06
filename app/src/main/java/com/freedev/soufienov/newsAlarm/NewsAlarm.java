@@ -2,7 +2,6 @@ package com.freedev.soufienov.newsAlarm;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -10,14 +9,13 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -37,41 +35,31 @@ public class NewsAlarm extends AppCompatActivity {
     DatabaseHelper databaseHelper;
     Spinner snoozSpinner;
     Intent intent;
+    TextView label;
 RadioButton norepeat,everyDayRepeat,weekRepeat,customRepeat;
-RadioGroup radioGroup;
     private String language="English",id,every_day="Every day",monday="",tuesday="",wednesday="",thursday="",friday="",saturday="",sunday="";
     private String repeat;
     private long Time_Toget_Data=30*1000;
-    private String countryCode;
-    public boolean editing=true;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.set_alarm);
-
-        TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        countryCode = tm.getSimCountryIso();
+        getViews();
         databaseHelper=new DatabaseHelper(this);
-        save= findViewById(R.id.save);
-        days= findViewById(R.id.days);
+
         intent=getIntent();
-        timePicker= findViewById(R.id.timePicker4);
-        snoozSpinner=findViewById(R.id.spinnerSnooz);
-        snoozSpinner.setSelection(2);
+
         timePicker.setIs24HourView(true);
         days.setText(every_day);
-        alarmModel=new AlarmModel(0,null,null,"first");
 
         try
         {id=intent.getStringExtra("id");
-            alarmModel.getSnoozTime();
           alarmModel= databaseHelper.getAlarmModel(Long.parseLong(id));
           String time=alarmModel.getTime();
           timePicker.setHour(Integer.parseInt(time.substring(0,2)));
           timePicker.setMinute(Integer.parseInt(time.substring(3,5)));
           days.setText(alarmModel.getRepeat());
-          snoozSpinner.setSelection(alarmModel.getSnoozTime());
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -82,6 +70,7 @@ RadioGroup radioGroup;
                     if (repeat.endsWith(",")) repeat=repeat.substring(0,repeat.length()-1);
                     alarmModel.setRepeat(repeat);
                     Log.e("sn",snoozSpinner.getSelectedItemPosition()+"");
+
                     alarmModel.setSnoozTime((snoozSpinner.getSelectedItemPosition()));
                     int id= databaseHelper.updateAlarm(alarmModel);
                     //ecraser l'intent
@@ -99,12 +88,20 @@ RadioGroup radioGroup;
                 }
             });
         }
-        catch (Exception e){}
+        catch (Exception e){        alarmModel=new AlarmModel(0,null,null,"first");
+        }
+        snoozSpinner.setSelection(alarmModel.getSnoozTime());
 
 
        }
 
-  
+  private void getViews(){
+      save= findViewById(R.id.save);
+      days= findViewById(R.id.days);
+      timePicker= findViewById(R.id.timePicker4);
+      snoozSpinner=findViewById(R.id.spinnerSnooz);
+      label=findViewById(R.id.label);
+  }
 
     public void popDays(View view) {
 
@@ -227,6 +224,7 @@ builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
       alarmModel.setRepeat(getRepeatString());
       days.setText(getRepeatString());
       alarmModel.setTime(timeString);
+      alarmModel.setName(label.getText().toString());
      int id=(int) databaseHelper.insertAlarm(alarmModel);
      alarmModel.setId(id);
 alarmModel.setSnoozTime(snoozSpinner.getSelectedItemPosition());

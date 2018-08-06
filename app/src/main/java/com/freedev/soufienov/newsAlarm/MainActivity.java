@@ -1,22 +1,16 @@
 package com.freedev.soufienov.newsAlarm;
 
-import android.app.AlarmManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View item, int position, long id){
-               editAlarm(item);
+               editAlarm(alarmModelList.get(position));
             }
         });
     }
@@ -101,11 +95,9 @@ alarmModelList.addAll(databaseHelper.getAllAlarms());
 
 
     }
-    public void editAlarm(View view){
+    public void editAlarm(AlarmModel alarmModel){
         Intent intent=new Intent(this,NewsAlarm.class);
-         LinearLayout linearLayout=(LinearLayout) view;
-        TextView textView=(TextView)linearLayout.getChildAt(2);
-        intent.putExtra("id",textView.getText());
+        intent.putExtra("id",alarmModel.getId()+"");
 startActivityForResult(intent,2);
     }
 

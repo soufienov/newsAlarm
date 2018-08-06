@@ -25,7 +25,7 @@ Intent myIntent;Context CTX;
 String alarm_repeat=intent.getStringExtra("alarm_repeat");
         Calendar calendar=Calendar.getInstance();
         Date date = calendar.getTime();
-        String day=new SimpleDateFormat("EEEE", Locale.ENGLISH).format(date.getTime());
+        String day=new SimpleDateFormat("EEEE", Locale.ENGLISH).format(date.getTime());Log.e("lols"," today1");
         if (alarm_repeat.contains(day.substring(0,2))||alarm_repeat.contains("Every day"))
         {Log.e("lol"," today");
             myIntent=new Intent(CTX,WakeupActivity.class);
