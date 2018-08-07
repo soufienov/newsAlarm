@@ -5,4 +5,5 @@
     <color name="colorAccent">#303F9F</color>
     <color name="year">#ffffff</color>
     <color name="title">#222222</color>
+    <color name="red">#ff0000</color>
 </resources>

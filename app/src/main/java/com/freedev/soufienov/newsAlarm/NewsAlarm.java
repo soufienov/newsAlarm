@@ -69,7 +69,6 @@ RadioButton norepeat,everyDayRepeat,weekRepeat,customRepeat;
                     else repeat=monday+tuesday+wednesday+thursday+friday+saturday+sunday;
                     if (repeat.endsWith(",")) repeat=repeat.substring(0,repeat.length()-1);
                     alarmModel.setRepeat(repeat);
-                    Log.e("sn",snoozSpinner.getSelectedItemPosition()+"");
 
                     alarmModel.setSnoozTime((snoozSpinner.getSelectedItemPosition()));
                     int id= databaseHelper.updateAlarm(alarmModel);
@@ -214,7 +213,11 @@ builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
         if(days_text.length()>0)
         {days.setText(days_text); every_day="";}
     }
+
+
+
     @RequiresApi(api = Build.VERSION_CODES.M)
+
     public void setAlarmClock(View v){
         String tit= "wake up you are late, if u don't i will continue to say rubbish please wakeup now!!";
         Intent browserIntent = new Intent(NewsAlarm.this,Alarm.class);
@@ -254,4 +257,6 @@ else repeat=monday+tuesday+wednesday+thursday+friday+saturday+sunday;
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()-Time_Toget_Data,
                 AlarmManager.INTERVAL_DAY, pi);
     }
-    }
+
+
+}

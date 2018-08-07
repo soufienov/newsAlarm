@@ -1,7 +1,5 @@
 package com.freedev.soufienov.newsAlarm;
 
-import android.util.Log;
-
 /**
  * Created by user on 21/03/2018.
  */
@@ -16,7 +14,7 @@ public class AlarmModel {
     public static final  String COLUMN_ACTIVE ="active";
     public static final String COLUMN_SNOOZED = "snoozed";
     public  static  final  String COLUMN_SNOOZTIME="snoozTime";
-
+private int[] snooz={2,5,10,15,30};
     private int id;
     private int snoozTime;
     private String repeat;
@@ -24,8 +22,7 @@ public class AlarmModel {
     private String name;
     private boolean active=true,snoozed=false;
     public int getSnoozTime() {
-        Log.e("tm",snoozTime+""+isActive()+isSnoozed()+"");
-        return snoozTime;
+        return snooz[snoozTime];
     }
 
     public void setSnoozTime(int snoozTime) {
