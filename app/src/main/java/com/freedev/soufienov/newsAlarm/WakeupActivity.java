@@ -3,14 +3,19 @@ package com.freedev.soufienov.newsAlarm;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -41,20 +46,28 @@ public  class  WakeupActivity extends AppCompatActivity {
     "You Are Never Too Old To Set Another Goal Or To Dream A New Dream.","To See What Is Right And Not Do It Is A Lack Of Courage.",
     "Reading Is To The Mind, As Exercise Is To The Body.","Fake It Until You Make It! Act As If You Had All The Confidence You Require Until It Becomes Your Reality."};
     private AlarmManager alarmManager;
-
+private MediaPlayer mediaPlayer;
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void onCreate(Bundle savedInstanceState){
 
         super.onCreate(savedInstanceState);
         Random rand = new Random();
         phrase=quotes[rand.nextInt(quotes.length)];
         setContentView(R.layout.wakedup_screen);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         databaseHelper=new DatabaseHelper(this);
         quote=findViewById(R.id.quote);
         quote.setText(phrase);
          alarm_id=getIntent().getIntExtra("alarm_id",-1);
-        Log.e("wake",alarm_id+"");
         alarmModel=databaseHelper.getAlarmModel(alarm_id);
-
+mediaPlayer=new MediaPlayer();mediaPlayer.setLooping(true);
+        try {
+            mediaPlayer.setDataSource(getResources().openRawResourceFd(R.raw.canary));
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void getSpeechInput(View view) {
@@ -81,7 +94,12 @@ public  class  WakeupActivity extends AppCompatActivity {
                     Log.e("txt",result.get(0));
 
                     if(distance(phrase,result.get(0))>1){Log.e("wrong","try again");}
-                }
+                    else {
+                        mediaPlayer.stop();
+                        setResult(1);
+                        finish();
+                    }
+                    }
                 break;
         }
     }
@@ -104,6 +122,7 @@ public  class  WakeupActivity extends AppCompatActivity {
         return diff;
     }
     public void snoozAlarm(View view){
+        mediaPlayer.stop();
 alarmModel=addSnoozTime(alarmModel);
 alarmModel.setId(0);
 alarmModel.setSnoozed(true);
@@ -125,7 +144,7 @@ databaseHelper.insertAlarm(alarmModel);
         Log.e("h1:",""+hours);
         Log.e("m1:",""+mins);
 
-        int sn=alarmModel.getSnoozTime();
+        int sn=alarmModel.getSnooz();
         Log.e("sn:",""+sn);
 
         int sm=sn+mins;

@@ -22,7 +22,7 @@ private int[] snooz={2,5,10,15,30};
     private String name;
     private boolean active=true,snoozed=false;
     public int getSnoozTime() {
-        return snooz[snoozTime];
+        return snoozTime;
     }
 
     public void setSnoozTime(int snoozTime) {
@@ -104,4 +104,7 @@ private int[] snooz={2,5,10,15,30};
         this.id = id;
     }
 
+    public int getSnooz() {
+        return snooz[snoozTime];
+    }
 }
