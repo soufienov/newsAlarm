@@ -1,8 +1,10 @@
 package com.freedev.soufienov.newsAlarm;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -34,7 +36,10 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
           setContentView(R.layout.home);
-
+        ActivityCompat.requestPermissions
+                (MainActivity.this,
+                        new String[]{Manifest.permission.RECORD_AUDIO},
+                        100);
        databaseHelper=new DatabaseHelper(this);
           aAdapter = new AlarmModelAdapter(this,R.layout.alarm_model,alarmModelList);
 

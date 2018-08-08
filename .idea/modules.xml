@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AllNews.iml" filepath="$PROJECT_DIR$/AllNews.iml" />
       <module fileurl="file://E:\newsAlarm\AllNews.iml" filepath="E:\newsAlarm\AllNews.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/newsAlarm.iml" filepath="$PROJECT_DIR$/newsAlarm.iml" />
       <module fileurl="file://D:\AllNews\newsAlarm.iml" filepath="D:\AllNews\newsAlarm.iml" />
     </modules>
   </component>

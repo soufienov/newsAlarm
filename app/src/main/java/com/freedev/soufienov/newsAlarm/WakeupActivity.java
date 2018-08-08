@@ -1,12 +1,17 @@
 package com.freedev.soufienov.newsAlarm;
 
 import android.app.AlarmManager;
+import android.app.KeyguardManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -25,13 +30,17 @@ import java.util.Random;
  * Created by sofiene on 31/07/2018.
  */
 
-public  class  WakeupActivity extends AppCompatActivity {
+public  class  WakeupActivity extends AppCompatActivity implements
+        RecognitionListener {
     String phrase="";
     TextView quote;
     int alarm_id,hours,mins;
     AlarmModel alarmModel;
     DatabaseHelper databaseHelper;
     private long Time_Toget_Data=30*1000;
+    KeyguardManager keyguardManager;
+    PowerManager powerManager;
+    private SpeechRecognizer speech = null;
 
     String[] quotes={"The Way Get Started Is To Quit Talking And Begin Doing.","The Pessimist Sees Difficulty In Every Opportunity. The Optimist Sees Opportunity In Every Difficulty",
     "Don’t Let Yesterday Take Up Too Much Of Today","You Learn More From Failure Than From Success. Don’t Let It Stop You. Failure Builds Character.",
@@ -51,6 +60,11 @@ private MediaPlayer mediaPlayer;
     public void onCreate(Bundle savedInstanceState){
 
         super.onCreate(savedInstanceState);
+        keyguardManager = (KeyguardManager) this.getSystemService(Context.KEYGUARD_SERVICE);
+        powerManager   = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
+        speech = SpeechRecognizer.createSpeechRecognizer(this);
+        speech.setRecognitionListener(this);
+
         Random rand = new Random();
         phrase=quotes[rand.nextInt(quotes.length)];
         setContentView(R.layout.wakedup_screen);
@@ -70,36 +84,51 @@ mediaPlayer=new MediaPlayer();mediaPlayer.setLooping(true);
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
     public void getSpeechInput(View view) {
-
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        Intent intent=new Intent();
+        intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+mediaPlayer.pause();
+            if (!powerManager.isInteractive() || keyguardManager.inKeyguardRestrictedInputMode()) {
+            Log.e("locked","locked");
+                PowerManager.WakeLock screenLock = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(
+                        PowerManager.FULL_WAKE_LOCK , "TAG");
+                screenLock.acquire();
+                speech.startListening(intent);
+
+            }
+
+        else
+            {
+
 
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, 10);
         } else {
             Toast.makeText(this, "Your Device Don't Support Speech Input", Toast.LENGTH_SHORT).show();
-        }
+        } }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         switch (requestCode) {
             case 10:
                 if (resultCode == RESULT_OK && data != null) {
+                    Log.e("result","ok");
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     Log.e("txt",result.get(0));
 
-                    if(distance(phrase,result.get(0))>1){Log.e("wrong","try again");}
+                    if(distance(phrase,result.get(0))>1){Log.e("wrong","try again");mediaPlayer.start();}
                     else {
                         mediaPlayer.stop();
                         setResult(1);
                         finish();
                     }
                     }
+                    else Log.e("result","not ok");
                 break;
         }
     }
@@ -168,5 +197,56 @@ databaseHelper.insertAlarm(alarmModel);
         alarmManager= (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()-Time_Toget_Data,
                 AlarmManager.INTERVAL_DAY, pi);
+    }
+
+    @Override
+    public void onReadyForSpeech(Bundle params) {
+
+    }
+
+    @Override
+    public void onBeginningOfSpeech() {
+
+    }
+
+    @Override
+    public void onRmsChanged(float rmsdB) {
+
+    }
+
+    @Override
+    public void onBufferReceived(byte[] buffer) {
+
+    }
+
+    @Override
+    public void onEndOfSpeech() {
+
+    }
+
+    @Override
+    public void onError(int error) {
+
+    }
+
+    @Override
+    public void onResults(Bundle results) {
+        Log.i("res", "onResults");
+        ArrayList<String> matches = results
+                .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        String text = "";
+        for (String result : matches)
+            text += result + "\n";
+
+        Log.e("ttett",text);
+    }
+    @Override
+    public void onPartialResults(Bundle partialResults) {
+
+    }
+
+    @Override
+    public void onEvent(int eventType, Bundle params) {
+
     }
 }

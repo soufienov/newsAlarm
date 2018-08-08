@@ -21,7 +21,8 @@ Intent myIntent;Context CTX;
     @Override
     public void onReceive(Context context, Intent intent) {
         CTX=context;
-  intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |  Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |  Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 String alarm_repeat=intent.getStringExtra("alarm_repeat");
 int alarm_id=intent.getIntExtra("alarm_id",-1);
 
