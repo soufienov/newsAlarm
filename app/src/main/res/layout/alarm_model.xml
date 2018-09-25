@@ -53,21 +53,20 @@ android:layout_marginRight="2dp"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
     <Button
-    android:id="@+id/disable"
-    android:layout_width="25dp"
-    android:layout_height="wrap_content"
-    android:background="@drawable/baseline_toggle_on_black_18dp"
-    android:onClick="disableAlarm"
-    android:layout_gravity="center"
-    />
+        android:id="@+id/disable"
+        android:layout_width="35dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/baseline_toggle_on_black_18dp"
+      />
+
     <Button
         android:id="@+id/remove"
-        android:layout_width="wrap_content"
+        android:layout_width="44dp"
         android:layout_height="wrap_content"
-        android:text="X"
-        android:textColor="@color/red"
         android:layout_gravity="center"
-      />
+        android:background="@drawable/delete" />
 
 </LinearLayout>

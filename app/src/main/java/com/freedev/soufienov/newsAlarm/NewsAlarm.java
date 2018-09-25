@@ -13,9 +13,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -35,7 +35,7 @@ public class NewsAlarm extends AppCompatActivity {
     DatabaseHelper databaseHelper;
     Spinner snoozSpinner;
     Intent intent;
-    TextView label;
+    EditText label;
 RadioButton norepeat,everyDayRepeat,weekRepeat,customRepeat;
     private String language="English",id,every_day="Every day",monday="",tuesday="",wednesday="",thursday="",friday="",saturday="",sunday="";
     private String repeat;
@@ -99,7 +99,7 @@ RadioButton norepeat,everyDayRepeat,weekRepeat,customRepeat;
       days= findViewById(R.id.days);
       timePicker= findViewById(R.id.timePicker4);
       snoozSpinner=findViewById(R.id.spinnerSnooz);
-      label=findViewById(R.id.label);
+      label=findViewById(R.id.labeltxt);
   }
 
     public void popDays(View view) {

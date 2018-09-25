@@ -20,12 +20,15 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
-
 /**
  * Created by sofiene on 31/07/2018.
  */
@@ -41,7 +44,14 @@ public  class  WakeupActivity extends AppCompatActivity implements
     KeyguardManager keyguardManager;
     PowerManager powerManager;
     private SpeechRecognizer speech = null;
-
+    String[] stopWords={"a","about","above","after","again","against","all","am","an","and","any","are","aren't","as","at","be","because","been","before","being","below","between",
+            "both","but","by","can't","cannot","could","couldn't","did","didn't","do","does","doesn't","doing","don't","down","during","each","few","for","from","further","had","hadn't",
+            "has","hasn't","have","haven't","having","he","he'd","he'll","he's","her","here","here's","hers","herself","him","himself","his","how","how's","i","i'd","i'll","i'm","i've",
+            "if","in","into","is","isn't","it","it's","its","itself","let's","me","more","most","mustn't","my","myself","no","nor","not","of","off","on","once","only","or","other",
+            "ought","our","ours","ourselves","out","over","own","same","shan't","she","she'd","she'll","she's","should","shouldn't","so","some","such","than","that","that's","the",
+            "their","theirs","them","themselves","then","there","there's","these","they","they'd","they'll","they're","they've","this","those","through","to","too","under","until","up",
+            "very","was","wasn't","we","we'd","we'll","we're","we've","were","weren't","what","what's","when","when's","where","where's","which","while","who","who's","whom","why","why's",
+            "with","won't","would","wouldn't","you","you'd","you'll","you're","you've","your","yours","yourself","yourselves"};
     String[] quotes={"The Way Get Started Is To Quit Talking And Begin Doing.","The Pessimist Sees Difficulty In Every Opportunity. The Optimist Sees Opportunity In Every Difficulty",
     "Don’t Let Yesterday Take Up Too Much Of Today","You Learn More From Failure Than From Success. Don’t Let It Stop You. Failure Builds Character.",
     "It’s Not Whether You Get Knocked Down, It’s Whether You Get Up.","If You Are Working On Something That You Really Care About, You Don’t Have To Be Pushed. The Vision Pulls You.",
@@ -55,6 +65,7 @@ public  class  WakeupActivity extends AppCompatActivity implements
     "You Are Never Too Old To Set Another Goal Or To Dream A New Dream.","To See What Is Right And Not Do It Is A Lack Of Courage.",
     "Reading Is To The Mind, As Exercise Is To The Body.","Fake It Until You Make It! Act As If You Had All The Confidence You Require Until It Becomes Your Reality."};
     private AlarmManager alarmManager;
+
 private MediaPlayer mediaPlayer;
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void onCreate(Bundle savedInstanceState){
@@ -120,8 +131,7 @@ mediaPlayer.pause();
                     Log.e("result","ok");
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     Log.e("txt",result.get(0));
-
-                    if(distance(phrase,result.get(0))>1){Log.e("wrong","try again");mediaPlayer.start();}
+                    if(distance(phrase,result.get(0))!=1){Log.e("wrong","try again");mediaPlayer.start();}
                     else {
                         mediaPlayer.stop();
                         setResult(1);
@@ -132,23 +142,18 @@ mediaPlayer.pause();
                 break;
         }
     }
-
+    public double compareStrings(String stringA, String stringB) {
+        return StringUtils.getJaroWinklerDistance(stringA, stringB);
+    }
     public int distance(String text,String speech){
         text=text.replaceAll("[’‘,;.!?]", "");
+        text=text.toLowerCase();
+        speech=speech.toLowerCase();
         Log.e("rep",text);
-        int diff=0,i=0;
         String[] text_array=text.split(" ");
-        String[] speech_array=speech.split(" ");
-        int text_lenght=text_array.length;
-        int speech_lenght=speech_array.length;
-        int LENGTH=text_lenght-speech_lenght;
-        if (LENGTH<-1||LENGTH>1) return 2;
-        else if(text_lenght>speech_lenght) LENGTH=speech_lenght;
-                else LENGTH=text_lenght;
-            while (i<LENGTH){
-                if (text_array[i].compareToIgnoreCase(speech_array[i])!=0) diff++;
-            i++;}
-        return diff;
+        List<String> quote_bag=removeStopWords(text_array);
+       return calculateDistance(quote_bag,speech);
+
     }
     public void snoozAlarm(View view){
         mediaPlayer.stop();
@@ -231,14 +236,18 @@ databaseHelper.insertAlarm(alarmModel);
 
     @Override
     public void onResults(Bundle results) {
-        Log.i("res", "onResults");
         ArrayList<String> matches = results
                 .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         String text = "";
         for (String result : matches)
             text += result + "\n";
+        if(distance(phrase,text)!=1){mediaPlayer.start();}
+        else {
+            mediaPlayer.stop();
+            setResult(1);
+            finish();
+        }
 
-        Log.e("ttett",text);
     }
     @Override
     public void onPartialResults(Bundle partialResults) {
@@ -248,5 +257,46 @@ databaseHelper.insertAlarm(alarmModel);
     @Override
     public void onEvent(int eventType, Bundle params) {
 
+    }
+    public List<String> removeStopWords(String[] entry){
+        List<String> resultString=new ArrayList<>();
+        List<String> words= Arrays.asList(stopWords);
+        int i=0;
+        for ( i=0; i<entry.length;i++){
+            if (!words.contains(entry[i])){
+                resultString.add(entry[i]);
+
+            }
+
+        }
+        return  resultString;
+    }
+    public int calculateDistance(List<String> quote,String speech){
+int mainpos=-1;
+        Log.e("quote",""+quote.toString());
+        String[] speech_array=speech.split(" ");
+int i=0;
+for (i=0;i<quote.size();i++){
+    List<String>   speech_list=Arrays.asList(speech_array);
+    Log.e("speechList",""+speech_list.toString());
+    int pos=speech_list.indexOf(quote.get(i));
+
+    if(pos>mainpos){
+        speech_array [pos]="**";
+    mainpos=pos;
+    Log.e("mainpos",""+mainpos);
+}
+else  {
+        for(int j=0;j<speech_array.length;j++){
+            if(compareStrings(quote.get(i),speech_array[j])<0.5)
+                return 0;
+            else {mainpos=j; speech_array [j]="**";}
+        }
+
+    }
+
+}
+
+        return 1;
     }
 }

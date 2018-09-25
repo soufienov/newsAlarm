@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -119,25 +118,7 @@ startActivityForResult(intent,2);
             Toast.makeText(this,"Alarm edited",Toast.LENGTH_SHORT);}
     }
 
-    public void disableAlarm(View v){
-        LinearLayout linearLayout=(LinearLayout)v.getParent();
 
-        linearLayout=(LinearLayout)linearLayout.getChildAt(0);
-        TextView id=(TextView)linearLayout.getChildAt(2);
-        final int alarmId=Integer.parseInt(id.getText().toString());
-        AlarmModel alert= alarmModelList.get(alarmId);
-        Button disable=(Button)v;
-        if(alert.isActive()) {
-            alert.setActive(false);
-            disable.setBackgroundResource(R.drawable.baseline_toggle_off_black_18dp);
-        }
-        else
-        {
-            alert.setActive(true);
-            disable.setBackgroundResource(R.drawable.baseline_toggle_on_black_18dp);
-        }
-        databaseHelper.updateAlarm(alert);
-    }
 
 
 }

@@ -20,7 +20,9 @@
             </intent-filter>
         </activity>
         <activity android:name="com.freedev.soufienov.newsAlarm.NewsAlarm"></activity>
-        <activity android:name="com.freedev.soufienov.newsAlarm.WakeupActivity"></activity>
+        <activity android:name="com.freedev.soufienov.newsAlarm.WakeupActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            ></activity>
 
         <receiver android:name=".Alarm"/>
     </application>
