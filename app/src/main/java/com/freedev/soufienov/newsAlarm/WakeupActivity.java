@@ -13,10 +13,12 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,12 +39,14 @@ public  class  WakeupActivity extends AppCompatActivity implements
         RecognitionListener {
     String phrase="";
     TextView quote;
+    AlertDialog.Builder builder1;
     int alarm_id,hours,mins;
     AlarmModel alarmModel;
     DatabaseHelper databaseHelper;
     private long Time_Toget_Data=30*1000;
     KeyguardManager keyguardManager;
     PowerManager powerManager;
+    int attempts=0;
     private SpeechRecognizer speech = null;
     String[] stopWords={"a","about","above","after","again","against","all","am","an","and","any","are","aren't","as","at","be","because","been","before","being","below","between",
             "both","but","by","can't","cannot","could","couldn't","did","didn't","do","does","doesn't","doing","don't","down","during","each","few","for","from","further","had","hadn't",
@@ -67,6 +71,9 @@ public  class  WakeupActivity extends AppCompatActivity implements
     private AlarmManager alarmManager;
 
 private MediaPlayer mediaPlayer;
+    private AlertDialog alert;
+    private Intent intent;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void onCreate(Bundle savedInstanceState){
 
@@ -96,19 +103,24 @@ mediaPlayer=new MediaPlayer();mediaPlayer.setLooping(true);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
-    public void getSpeechInput(View view) {
-        Intent intent=new Intent();
+    public void getSpeechInput(View view) { Log.e("attempt",""+attempts);
+         intent=new Intent();
         intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-mediaPlayer.pause();
+            mediaPlayer.pause();
             if (!powerManager.isInteractive() || keyguardManager.inKeyguardRestrictedInputMode()) {
             Log.e("locked","locked");
                 PowerManager.WakeLock screenLock = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(
                         PowerManager.FULL_WAKE_LOCK , "TAG");
                 screenLock.acquire();
-                speech.startListening(intent);
 
+                if(attempts<3)
+                speech.startListening(intent);
+                else{
+
+                    ShowChoice();
+                }
             }
 
         else
@@ -116,12 +128,36 @@ mediaPlayer.pause();
 
 
         if (intent.resolveActivity(getPackageManager()) != null) {
+            if(attempts<3)
             startActivityForResult(intent, 10);
+            else ShowChoice();
         } else {
             Toast.makeText(this, "Your Device Don't Support Speech Input", Toast.LENGTH_SHORT).show();
         } }
     }
 
+    private void ShowChoice() {
+        Log.e("choice","******");
+        builder1 = new AlertDialog.Builder(this);
+        builder1.setTitle("Choose Input Method");
+       builder1.setView(R.layout.choose_input_layout);
+        builder1.setMessage("Can't stop Alarm? Try writing the quote!!");
+alert=builder1.create();
+        alert.show();
+    }
+public void ReadQuote(View view){
+        alert.cancel();
+    speech.startListening(intent);
+}
+public void WriteQuote(View view){
+    alert.cancel();
+    builder1 = new AlertDialog.Builder(this);
+    builder1.setTitle("Write the quote back");
+    builder1.setView(R.layout.write_back_layout);
+    alert=builder1.create();
+    alert.show();
+
+}
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -131,28 +167,28 @@ mediaPlayer.pause();
                     Log.e("result","ok");
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     Log.e("txt",result.get(0));
-                    if(distance(phrase,result.get(0))!=1){Log.e("wrong","try again");mediaPlayer.start();}
+                    if(distance(phrase,result.get(0),0.5)!=1){Log.e("wrong","try again");mediaPlayer.start();attempts++;}
                     else {
                         mediaPlayer.stop();
                         setResult(1);
                         finish();
                     }
                     }
-                    else Log.e("result","not ok");
+                    else attempts++;
                 break;
         }
     }
     public double compareStrings(String stringA, String stringB) {
         return StringUtils.getJaroWinklerDistance(stringA, stringB);
     }
-    public int distance(String text,String speech){
+    public int distance(String text,String speech,double precision){
         text=text.replaceAll("[’‘,;.!?]", "");
         text=text.toLowerCase();
         speech=speech.toLowerCase();
         Log.e("rep",text);
         String[] text_array=text.split(" ");
         List<String> quote_bag=removeStopWords(text_array);
-       return calculateDistance(quote_bag,speech);
+       return calculateDistance(quote_bag,speech,precision);
 
     }
     public void snoozAlarm(View view){
@@ -241,7 +277,7 @@ databaseHelper.insertAlarm(alarmModel);
         String text = "";
         for (String result : matches)
             text += result + "\n";
-        if(distance(phrase,text)!=1){mediaPlayer.start();}
+        if(distance(phrase,text,0.6)!=1){attempts++;mediaPlayer.start();}
         else {
             mediaPlayer.stop();
             setResult(1);
@@ -271,7 +307,7 @@ databaseHelper.insertAlarm(alarmModel);
         }
         return  resultString;
     }
-    public int calculateDistance(List<String> quote,String speech){
+    public int calculateDistance(List<String> quote,String speech ,double precision){
 int mainpos=-1;
         Log.e("quote",""+quote.toString());
         String[] speech_array=speech.split(" ");
@@ -288,7 +324,7 @@ for (i=0;i<quote.size();i++){
 }
 else  {
         for(int j=0;j<speech_array.length;j++){
-            if(compareStrings(quote.get(i),speech_array[j])<0.5)
+            if(compareStrings(quote.get(i),speech_array[j])<precision)
                 return 0;
             else {mainpos=j; speech_array [j]="**";}
         }
@@ -298,5 +334,18 @@ else  {
 }
 
         return 1;
+    }
+
+    public void HandleWriteBack(View view){
+
+        EditText editText=findViewById(R.id.editText);
+        String text=editText.getText().toString();
+alert.cancel();
+        if(distance(phrase,text,1)!=1){mediaPlayer.start();}
+        else {
+            mediaPlayer.stop();
+            setResult(1);
+            finish();
+        }
     }
 }

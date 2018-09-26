@@ -131,7 +131,7 @@ RadioButton norepeat,everyDayRepeat,weekRepeat,customRepeat;
     }
     public void weekRepeat(View view){ weekRepeat=(RadioButton)view;
         if(weekRepeat.isChecked()){
-            every_day="";  monday="Mon,";tuesday="Tue,";wednesday="Wed,";thursday="Thu,";friday="Fri,";saturday="Sat,";sunday="Sun";
+            every_day="";  monday="Mon,";tuesday="Tue,";wednesday="Wed,";thursday="Thu,";friday="Fri,";
         }
         else {every_day="";monday="";tuesday="";wednesday="";thursday="";friday="";saturday="";sunday="";}
         alarmModel.setRepeat(getRepeatString());
