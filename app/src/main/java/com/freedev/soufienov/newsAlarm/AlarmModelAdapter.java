@@ -94,7 +94,7 @@ holder.remove.setOnClickListener(new View.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				AlarmModel alert= alarmModelList.remove(position);
 				notifyDataSetChanged();
-				cancelalarm(alert);
+				cancelalarm(alert,getContext());
 				databaseHelper.deleteAlarm(alert);
 			}
 		});
@@ -114,7 +114,7 @@ holder.disable.setOnClickListener(new View.OnClickListener() {
 		if(alert.isActive()) {
 			alert.setActive(false);
 			disable.setBackgroundResource(R.drawable.baseline_toggle_off_black_18dp);
-			cancelalarm(alert);
+			cancelalarm(alert,getContext());
 		}
 		else
 		{
@@ -126,10 +126,10 @@ holder.disable.setOnClickListener(new View.OnClickListener() {
 });
 		return myView;
 	}
-	public void cancelalarm(AlarmModel alarmModel){
+	public static void cancelalarm(AlarmModel alarmModel,Context context){
 		AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
 
-		Intent browserIntent=new Intent(getContext(),Alarm.class);
+		Intent browserIntent=new Intent(context,Alarm.class);
 
 		PendingIntent pi= PendingIntent.getBroadcast(context.getApplicationContext(),alarmModel.getId(),browserIntent,0);
 		alarmManager.cancel(pi);

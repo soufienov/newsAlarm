@@ -18,7 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -73,10 +74,10 @@ public  class  WakeupActivity extends AppCompatActivity implements
 private MediaPlayer mediaPlayer;
     private AlertDialog alert;
     private Intent intent;
-
+    InputMethodManager imm;
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void onCreate(Bundle savedInstanceState){
-
+         imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         super.onCreate(savedInstanceState);
         keyguardManager = (KeyguardManager) this.getSystemService(Context.KEYGUARD_SERVICE);
         powerManager   = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
@@ -91,6 +92,7 @@ private MediaPlayer mediaPlayer;
         quote=findViewById(R.id.quote);
         quote.setText(phrase);
          alarm_id=getIntent().getIntExtra("alarm_id",-1);
+         Log.e("id",""+alarm_id);
         alarmModel=databaseHelper.getAlarmModel(alarm_id);
 mediaPlayer=new MediaPlayer();mediaPlayer.setLooping(true);
         try {
@@ -118,6 +120,7 @@ mediaPlayer=new MediaPlayer();mediaPlayer.setLooping(true);
                 if(attempts<3)
                 speech.startListening(intent);
                 else{
+
 
                     ShowChoice();
                 }
@@ -151,12 +154,9 @@ public void ReadQuote(View view){
 }
 public void WriteQuote(View view){
     alert.cancel();
-    builder1 = new AlertDialog.Builder(this);
-    builder1.setTitle("Write the quote back");
-    builder1.setView(R.layout.write_back_layout);
-    alert=builder1.create();
-    alert.show();
-
+Intent writeIntent= new Intent(this,WriteBackActivity.class);
+writeIntent.putExtra("quote",phrase);
+startActivityForResult(writeIntent,11);
 }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -170,14 +170,23 @@ public void WriteQuote(View view){
                     if(distance(phrase,result.get(0),0.5)!=1){Log.e("wrong","try again");mediaPlayer.start();attempts++;}
                     else {
                         mediaPlayer.stop();
+                        CloseAlarm(alarmModel);
                         setResult(1);
                         finish();
                     }
                     }
                     else attempts++;
                 break;
+            case 2: if(distance(phrase,data.getStringExtra("text"),1)!=1){Log.e("wrong","try again");mediaPlayer.start();attempts++;}
+            else {
+                mediaPlayer.stop();
+                CloseAlarm(alarmModel);
+                setResult(1);
+                finish();
+            }
         }
-    }
+        }
+
     public double compareStrings(String stringA, String stringB) {
         return StringUtils.getJaroWinklerDistance(stringA, stringB);
     }
@@ -192,25 +201,31 @@ public void WriteQuote(View view){
 
     }
     public void snoozAlarm(View view){
-        mediaPlayer.stop();
+        mediaPlayer.stop();int id = 0;
 alarmModel=addSnoozTime(alarmModel);
-alarmModel.setId(0);
+if (!alarmModel.isSnoozed())
+{alarmModel.setId(0);
 alarmModel.setSnoozed(true);
-databaseHelper.insertAlarm(alarmModel);
-        String tit= "wake up you are late, if u don't i will continue to say rubbish please wakeup now!!";
+id=(int)databaseHelper.insertAlarm(alarmModel);}
+else databaseHelper.updateAlarm(alarmModel);
+        String tit= "wake up ";
         Intent browserIntent = new Intent(this,Alarm.class);
         browserIntent.putExtra("title",tit);
-        browserIntent.putExtra("alarm_id",alarmModel.getId());
+        browserIntent.putExtra("alarm_id",id);alarmModel.setRepeat("Every day");
         browserIntent.putExtra("alarm_repeat",alarmModel.getRepeat());
-
+Log.e("snid",""+id);
         PendingIntent pi= PendingIntent.getBroadcast(getApplicationContext(),alarmModel.getId(),browserIntent,0);
         setAlarmManager(pi);
         setResult(1);finish();
     }
     public AlarmModel addSnoozTime(AlarmModel alarmModel){
         String time=alarmModel.getTime();
-         hours=Integer.parseInt(time.substring(0,2));
-         mins=Integer.parseInt(time.substring(3,5));
+        Date d=new Date();
+
+
+        hours= d.getHours();
+
+        mins= d.getMinutes();
         Log.e("h1:",""+hours);
         Log.e("m1:",""+mins);
 
@@ -261,12 +276,12 @@ databaseHelper.insertAlarm(alarmModel);
     }
 
     @Override
-    public void onEndOfSpeech() {
+    public void onEndOfSpeech() {Log.e("ed","end");
 
     }
 
     @Override
-    public void onError(int error) {
+    public void onError(int error) {Log.e("error","err");
 
     }
 
@@ -287,7 +302,7 @@ databaseHelper.insertAlarm(alarmModel);
     }
     @Override
     public void onPartialResults(Bundle partialResults) {
-
+        Log.e("ps","prs");
     }
 
     @Override
@@ -335,17 +350,13 @@ else  {
 
         return 1;
     }
+public void CloseAlarm(AlarmModel alarmModel){
 
-    public void HandleWriteBack(View view){
-
-        EditText editText=findViewById(R.id.editText);
-        String text=editText.getText().toString();
-alert.cancel();
-        if(distance(phrase,text,1)!=1){mediaPlayer.start();}
-        else {
-            mediaPlayer.stop();
-            setResult(1);
-            finish();
+        if (alarmModel.isSnoozed())
+        {AlarmModelAdapter.cancelalarm(alarmModel,getApplicationContext());
+            databaseHelper.deleteAlarm(alarmModel);
         }
-    }
+
+}
+
 }

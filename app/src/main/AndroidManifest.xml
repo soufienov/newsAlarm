@@ -23,6 +23,10 @@
         <activity android:name="com.freedev.soufienov.newsAlarm.WakeupActivity"
             android:theme="@style/AppTheme.NoActionBar"
             ></activity>
+        <activity android:name="com.freedev.soufienov.newsAlarm.WriteBackActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysVisible"
+            ></activity>
 
         <receiver android:name=".Alarm"/>
     </application>
