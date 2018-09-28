@@ -7,8 +7,9 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
+import android.view.KeyEvent;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -37,10 +38,25 @@ TextView quote;
             PowerManager.WakeLock screenLock = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(
                     PowerManager.FULL_WAKE_LOCK , "TAG");
             screenLock.acquire();
-    }}
-    public void HandleWriteBack(View view){
+    }
 
-        EditText editText=findViewById(R.id.editText);
+
+        EditText editText = findViewById(R.id.editText);
+        editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    // TODO do something
+                    handled = true;
+                    HandleWriteBack((EditText)v);
+                }
+                return handled;
+            }
+        });
+    }
+    public void HandleWriteBack(EditText editText){
+
         String text=editText.getText().toString();
         intent.putExtra("text",text);
             setResult(2);

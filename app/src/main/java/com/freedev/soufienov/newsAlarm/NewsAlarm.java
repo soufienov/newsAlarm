@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -230,7 +231,8 @@ builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
       alarmModel.setName(label.getText().toString());
      int id=(int) databaseHelper.insertAlarm(alarmModel);
      alarmModel.setId(id);
-alarmModel.setSnoozTime(snoozSpinner.getSelectedItemPosition());
+        TextView tv= (TextView) snoozSpinner.getSelectedView();
+alarmModel.setSnoozTime(Integer.parseInt(tv.getText().toString()));
         browserIntent.putExtra("alarm_id",id);
 browserIntent.putExtra("alarm_repeat",repeat);
 

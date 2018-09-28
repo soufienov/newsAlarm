@@ -2,37 +2,49 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-   >
+    android:background="@color/colorAccent"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/instruction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_gravity="center"
-        android:text="Write the quote below!!" />
+        android:layout_weight="1"
+        android:layout_marginTop="8dp"
+        android:textSize="25sp"
+        android:text="Write the quote below!!"
+        android:textAlignment="center"
+        android:textColor="@color/red" />
+
     <TextView
         android:id="@+id/quoteView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="125dp"
         android:layout_weight="1"
-         />
+        android:textAlignment="center"
+        android:textColor="@color/year" />
 
     <EditText
         android:id="@+id/editText"
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="189dp"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
+        android:background="@color/year"
         android:ems="10"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:textSize="25dp"
+        android:imeOptions="actionDone"
         android:inputType="textMultiLine">
-    <requestFocus />
-</EditText>
+        <requestFocus />
+    </EditText>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:onClick="HandleWriteBack"
         android:layout_gravity="center"
-        android:text="OK"/>
+        android:onClick="HandleWriteBack"
+        android:text="OK" />
 </LinearLayout>
